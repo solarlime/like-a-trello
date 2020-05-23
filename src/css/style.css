@@ -1,0 +1,235 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap');
+
+html {
+    font-family: "IBM Plex Sans", Arial, sans-serif;
+    font-size: 16px;
+    word-wrap: break-word;
+}
+
+body {
+    position: relative;
+    min-width: 320px;
+    width: auto;
+    height: 100vh;
+    margin: 0;
+    overflow-y: hidden;
+}
+
+.background {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: #25272a;
+    background-image: url("/src/img/nothern-lights.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(100vw - 40px);
+    height: 100px;
+    padding: 0 20px;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.header-title {
+    flex-grow: 1;
+    font-weight: 600;
+    text-align: center;
+}
+
+main {
+    position: absolute;
+    top: 100px;
+    min-width: 890px;
+    width: 100vw;
+    box-sizing: border-box;
+    padding: 0 20px;
+}
+
+.board {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+}
+
+.board-item {
+    position: relative;
+    flex-grow: 1;
+    height: 50vh;
+    margin-right: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 1px;
+}
+
+.board-item:last-child {
+    margin: 0;
+}
+
+.column {
+    display: flex;
+    list-style: none;
+    padding: 5px 0 0 0;
+    flex-direction: column;
+    width: 100%;
+    height: calc(50vh - 35px);
+    color: white;
+    background: transparent;
+}
+
+.column-container {
+    list-style: none;
+    padding: 1px;
+    margin: 5px 0;
+    color: white;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.column-container::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+.column-item {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 5px 0;
+    padding: 10px;
+    font-size: 0.9rem;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.new {
+    position: absolute;
+    bottom: 15px;
+    left: calc(50% - 25%);
+    display: block;
+    width: 50%;
+    text-align: center;
+}
+
+.column-item-title {
+    width: calc(100% - 50px);
+}
+
+.column-item-actions {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    margin-left: 5px;
+}
+
+.column-item-actions-update, .column-item-actions-delete {
+    width: 20px;
+    height: 20px;
+    padding-left: 5px;
+    fill: white;
+    cursor: pointer;
+}
+
+.modal-container {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(102, 102, 102, 0.5);
+}
+
+.modal {
+    display: flex;
+    justify-content: center;
+    min-width: 256px;
+    width: 60%;
+    max-width: 400px;
+    height: auto;
+    padding: 20px 0;
+    border: 1px solid crimson;
+    background: mistyrose;
+
+}
+
+#add-and-update, #delete {
+    width: 80%;
+}
+
+label {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    padding: 10px 0;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.error {
+    display: block;
+    width: 100%;
+    font-size: 0.8rem;
+}
+
+.add {
+    padding: 0;
+}
+
+.add, .update {
+    text-align: left;
+}
+
+#title, #description {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 5px;
+    border: 1px solid grey;
+}
+
+#description {
+    height: 50px;
+}
+
+#title:focus, #description:focus {
+    border: 1px solid crimson;
+}
+
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.save, .cancel, .delete {
+    width: auto;
+    flex-grow: 1;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 410px), (max-height: 700px) {
+    .header {
+        height: 70px;
+    }
+
+    .header-title {
+        font-size: 1.4rem;
+    }
+
+    .main {
+        top: 70px;
+    }
+}
