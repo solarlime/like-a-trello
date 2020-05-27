@@ -62,7 +62,7 @@ main {
 
 .board-item {
     position: relative;
-    flex-grow: 1;
+    width: calc(calc(100% - 40px) / 3);
     height: 60vh;
     margin-right: 20px;
     background: rgba(0, 0, 0, 0.5);
@@ -119,6 +119,10 @@ main {
     padding: 10px 0;
     margin: 0 10px;
     text-align: center;
+    background: transparent;
+    color: white;
+    border: 0;
+    font-size: inherit;
 }
 
 .new:hover {
@@ -144,6 +148,14 @@ main {
     cursor: pointer;
 }
 
+.column-item-actions-update:hover {
+    fill: forestgreen;
+}
+
+.column-item-actions-delete:hover {
+    fill: crimson;
+}
+
 .modal-container {
     position: fixed;
     top: 0;
@@ -158,7 +170,7 @@ main {
 .modal {
     display: flex;
     justify-content: center;
-    min-width: 256px;
+    min-width: 290px;
     width: 60%;
     max-width: 400px;
     height: auto;
@@ -249,8 +261,8 @@ label {
     height: 50px;
 }
 
-#file:focus, #description:focus {
-    border: 1px solid crimson;
+#description:focus {
+    border: 1px solid forestgreen;
 }
 
 #description::placeholder {
