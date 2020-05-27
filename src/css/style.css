@@ -20,7 +20,7 @@ body {
     width: 100vw;
     height: 100vh;
     background-color: #25272a;
-    background-image: url("/src/img/nothern-lights.jpg");
+    background-image: url("../img/nothern-lights.jpg");
     background-size: cover;
     background-repeat: no-repeat;
 }
