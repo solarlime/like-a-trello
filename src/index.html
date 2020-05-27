@@ -291,15 +291,20 @@
     <div class="modal-container modal-add-update hidden">
         <div class="modal">
             <form id="add-and-update" novalidate>
-                <label class="add">
-                    Name
-                    <input id="title" placeholder="Input the name" type="text" required>
-                    <span class="error error-name hidden"></span>
-                </label>
-                <label class="update">
+                <label class="description">
                     Description
-                    <input id="description" placeholder="Input the description" type="textarea">
-                    <span class="error error-cost hidden"></span>
+                    <textarea id="description" placeholder="Input the description"></textarea>
+                    <span class="error error-description hidden"></span>
+                </label>
+                <label class="file">
+                    File (optional)
+                    <div class="file-container">
+                        <input id="file" type="file">
+                        <div class="fake-file">
+                            Drop your files here or <span class="fake-file-chooser">choose them</span>
+                        </div>
+                    </div>
+                    <span class="error error-file hidden"></span>
                 </label>
                 <div class="button-container">
                     <button class="save" type="button">Save</button>
