@@ -118,6 +118,6 @@ export default class Page {
       + '                                    <path d="m209.253906 465.976562c8.285156 0 15-6.714843 15-15v-270.398437c0-8.285156-6.714844-15-15-15s-15 6.714844-15 15v270.398437c0 8.285157 6.714844 15 15 15zm0 0"></path>\n'
       + '                                </svg>\n'
       + '                            </div>';
-    document.querySelector(`ul#${item.column}`).append(newRow);
+    document.getElementById(`${item.column}`).append(newRow);
   }
 }
