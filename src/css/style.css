@@ -61,7 +61,6 @@ main {
 }
 
 .board-item {
-    position: relative;
     width: calc(calc(100% - 40px) / 3);
     height: 60vh;
     margin-right: 20px;
@@ -80,12 +79,13 @@ main {
     list-style: none;
     flex-direction: column;
     width: 100%;
-    height: calc(60vh - 40px);
+    height: 100%;
     color: white;
     background: transparent;
 }
 
 .column-container {
+    flex-grow: 1;
     list-style: none;
     padding: 1px;
     margin: 5px 0;
@@ -103,21 +103,24 @@ main {
     display: flex;
     justify-content: space-between;
     background: rgba(255, 255, 255, 0.1);
+    box-sizing: border-box;
     margin: 5px 0;
     padding: 10px;
     font-size: 0.9rem;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
-.new {
+.drag {
     position: absolute;
-    bottom: 10px;
-    left: 0;
+    width: calc((100% - 80px) / 3 - 20px);
+}
+
+.new {
     display: block;
     width: calc(100% - 20px);
     box-sizing: border-box;
     padding: 10px 0;
-    margin: 0 10px;
+    margin: auto 10px 0 10px;
     text-align: center;
     background: transparent;
     color: white;
