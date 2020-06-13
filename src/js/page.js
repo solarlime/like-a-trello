@@ -120,6 +120,7 @@ export default class Page {
     this.delete.addEventListener('click', () => Modals.delete(this.targetRow));
 
     this.board.addEventListener('mousedown', (event) => {
+      event.preventDefault();
       if (event.target.classList.contains('column-item-title')) {
         // Указатель на перетаскиваемый элемент в DOM
         this.drag = document.elementFromPoint(event.clientX, event.clientY).closest('li.column-item');
@@ -130,6 +131,7 @@ export default class Page {
           this.nullCoordinates.x = event.clientX;
           this.nullCoordinates.y = event.clientY;
           this.drag.classList.add('drag');
+          this.drag.style.cursor = 'grabbing';
         }
       }
     });
