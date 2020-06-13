@@ -14,7 +14,7 @@ export default class App {
     Modals.reset();
     document.querySelectorAll('li.column-item').forEach((item) => item.remove());
     if (Storage.getItems()) {
-      Storage.getItems().forEach((item) => Page.render(item));
+      Storage.getItems().sort((a, b) => a.order - b.order).forEach((item) => Page.render(item));
     }
   }
 }
