@@ -21,59 +21,59 @@ export default class Page {
     // "Начало координат". Понадобится при Drag and Drop
     this.nullCoordinates = { x: 0, y: 0 };
     // Example of the data
-    const example = {
-      items: [
-        {
-          id: '11',
-          order: '2',
-          column: 'todo',
-          name: 'Second',
-        },
-        {
-          id: '12',
-          order: '1',
-          column: 'todo',
-          name: 'First',
-        },
-        {
-          id: '13',
-          order: '4',
-          column: 'doing',
-          name: 'Sit',
-        },
-        {
-          id: '14',
-          order: '3',
-          column: 'doing',
-          name: 'Sing',
-        },
-        {
-          id: '21',
-          order: '2',
-          column: 'doing',
-          name: 'Knit',
-        },
-        {
-          id: '22',
-          order: '1',
-          column: 'doing',
-          name: 'Ring',
-        },
-        {
-          id: '31',
-          order: '2',
-          column: 'done',
-          name: 'Go to street',
-        },
-        {
-          id: '32',
-          order: '1',
-          column: 'done',
-          name: 'Make something',
-        },
-      ],
-    };
-    localStorage.setItem('items', JSON.stringify(example.items));
+    // const example = {
+    //   items: [
+    //     {
+    //       id: '11',
+    //       order: '2',
+    //       column: 'todo',
+    //       name: 'Second',
+    //     },
+    //     {
+    //       id: '12',
+    //       order: '1',
+    //       column: 'todo',
+    //       name: 'First',
+    //     },
+    //     {
+    //       id: '13',
+    //       order: '4',
+    //       column: 'doing',
+    //       name: 'Sit',
+    //     },
+    //     {
+    //       id: '14',
+    //       order: '3',
+    //       column: 'doing',
+    //       name: 'Sing',
+    //     },
+    //     {
+    //       id: '21',
+    //       order: '2',
+    //       column: 'doing',
+    //       name: 'Knit',
+    //     },
+    //     {
+    //       id: '22',
+    //       order: '1',
+    //       column: 'doing',
+    //       name: 'Ring',
+    //     },
+    //     {
+    //       id: '31',
+    //       order: '2',
+    //       column: 'done',
+    //       name: 'Go to street',
+    //     },
+    //     {
+    //       id: '32',
+    //       order: '1',
+    //       column: 'done',
+    //       name: 'Make something',
+    //     },
+    //   ],
+    // };
+    // localStorage.setItem('items', JSON.stringify(example.items));
     this.save.disabled = true;
   }
 
