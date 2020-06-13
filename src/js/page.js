@@ -1,6 +1,9 @@
 /* eslint-disable import/no-cycle */
+/* eslint-disable no-param-reassign */
+import App from './app';
 import Modals from './modals';
 import validation from './validation';
+import Storage from './storage';
 
 export default class Page {
   constructor() {
@@ -14,42 +17,63 @@ export default class Page {
     this.save = this.page.querySelector('button.save');
     this.delete = this.page.querySelector('button.delete');
     this.column = 'todo';
+    this.drag = null;
+    // "Начало координат". Понадобится при Drag and Drop
+    this.nullCoordinates = { x: 0, y: 0 };
     // Example of the data
-    // const example = {
-    //   items: [
-    //     {
-    //       id: 11,
-    //       column: 'todo',
-    //       name: 'Sit',
-    //     },
-    //     {
-    //       id: 12,
-    //       column: 'todo',
-    //       name: 'Sing',
-    //     },
-    //     {
-    //       id: 21,
-    //       column: 'doing',
-    //       name: 'Knit',
-    //     },
-    //     {
-    //       id: 22,
-    //       column: "doing",
-    //       name: 'Ring',
-    //     },
-    //     {
-    //       id: 31,
-    //       column: "done",
-    //       name: 'Go to street',
-    //     },
-    //     {
-    //       id: 32,
-    //       column: "done",
-    //       name: 'Make something',
-    //     },
-    //   ],
-    // };
-    // localStorage.setItem('items', JSON.stringify(example.items));
+    const example = {
+      items: [
+        {
+          id: '11',
+          order: '2',
+          column: 'todo',
+          name: 'Second',
+        },
+        {
+          id: '12',
+          order: '1',
+          column: 'todo',
+          name: 'First',
+        },
+        {
+          id: '13',
+          order: '4',
+          column: 'doing',
+          name: 'Sit',
+        },
+        {
+          id: '14',
+          order: '3',
+          column: 'doing',
+          name: 'Sing',
+        },
+        {
+          id: '21',
+          order: '2',
+          column: 'doing',
+          name: 'Knit',
+        },
+        {
+          id: '22',
+          order: '1',
+          column: 'doing',
+          name: 'Ring',
+        },
+        {
+          id: '31',
+          order: '2',
+          column: 'done',
+          name: 'Go to street',
+        },
+        {
+          id: '32',
+          order: '1',
+          column: 'done',
+          name: 'Make something',
+        },
+      ],
+    };
+    localStorage.setItem('items', JSON.stringify(example.items));
     this.save.disabled = true;
   }
 
@@ -94,12 +118,134 @@ export default class Page {
     this.save.addEventListener('click', (event) => Modals.save(this.modalAddUpdate, event.target, this.column, this.targetRow));
 
     this.delete.addEventListener('click', () => Modals.delete(this.targetRow));
+
+    this.board.addEventListener('mousedown', (event) => {
+      if (event.target.classList.contains('column-item-title')) {
+        // Указатель на перетаскиваемый элемент в DOM
+        this.drag = document.elementFromPoint(event.clientX, event.clientY).closest('li.column-item');
+        if (this.drag) {
+          // Фиксируем старую колонку, понадобится при перестроении колонок
+          this.oldColumn = this.drag.closest('.column-container');
+          this.drag.style.transform = 'rotate(2deg)';
+          this.nullCoordinates.x = event.clientX;
+          this.nullCoordinates.y = event.clientY;
+          this.drag.classList.add('drag');
+        }
+      }
+    });
+
+    this.board.addEventListener('mousemove', (event) => {
+      if (this.drag) {
+        this.drag.style.transform = `translate(${event.clientX - this.nullCoordinates.x}px, ${event.clientY - this.nullCoordinates.y}px) rotate(2deg)`;
+        /*
+        const column = document.elementsFromPoint(event.clientX, event.clientY)
+          .find((item) => item.classList.contains('column-container'));
+        if (column) {
+          const firstMovingItem = document.elementsFromPoint(event.clientX, event.clientY)
+            .find((item) => item.classList.contains('column-item')
+              && item.getAttribute('data-id') !== this.drag.getAttribute('data-id'));
+          if (firstMovingItem) {
+            this.oldFirstMovingItem = firstMovingItem;
+            firstMovingItem.style.marginTop = '30px';
+          } else {
+            this.oldFirstMovingItem.style.marginTop = '';
+          }
+        } */
+      }
+    });
+
+    this.board.addEventListener('mouseup', (event) => {
+      if (this.drag) {
+        // Новая колонка (если это именно она)
+        const column = document.elementsFromPoint(event.clientX, event.clientY)
+          .find((item) => item.classList.contains('column-container'));
+        if (column) {
+          // Элемент, на который навели ячейку
+          const firstMovingItem = document.elementsFromPoint(event.clientX, event.clientY)
+            .find((item) => item.classList.contains('column-item')
+              && item.getAttribute('data-id') !== this.drag.getAttribute('data-id'));
+          const items = Storage.getItems();
+          // Указатель на перетаскиваемый элемент в localStorage
+          const targetItem = items.find((item) => item.id.toString() === this.drag.getAttribute('data-id'));
+          // Новое значение для колонки
+          targetItem.column = column.id;
+          // Фиксируем начальные значения ячейки.
+          // Важно сохранить order, чтобы отфильтровать лишнее в localStorage
+          const notMovingItemOrder = parseInt({ ...targetItem }.order, 10);
+          // После присвоения колонка могла измениться или остаться прежней. Проверяем
+          if (this.oldColumn.id === targetItem.column) {
+            if (firstMovingItem) {
+              // Ячейке присваиваем (номер элемента - 1), на который навели
+              // Всех, кто меньше, уменьшаем на единицу кроме тех, кто меньше изначального
+              targetItem.order = parseInt(firstMovingItem.getAttribute('data-order'), 10) - 1;
+              items.filter((item) => item.column === targetItem.column
+                && item.id !== targetItem.id
+                && parseInt(item.order, 10) >= notMovingItemOrder)
+                .map((item) => {
+                  if (parseInt(item.order, 10) <= targetItem.order) {
+                    item.order = parseInt(item.order, 10) - 1;
+                  }
+                  return item;
+                });
+            } else {
+              // Навели на свободное место - ставим последним посредством length
+              // Всех, кто меньше, уменьшаем на единицу кроме тех, кто меньше изначального
+              targetItem.order = items.filter((item) => item.column === targetItem.column).length;
+              items.filter((item) => item.column === targetItem.column
+                && item.id !== targetItem.id
+                && parseInt(item.order, 10) >= notMovingItemOrder)
+                .map((item) => {
+                  if (parseInt(item.order, 10) <= targetItem.order) {
+                    item.order = parseInt(item.order, 10) - 1;
+                  }
+                  return item;
+                });
+            }
+          } else {
+            // Заполняем пустоту в старой колонке
+            items.filter((item) => item.column === this.oldColumn.id).map((item) => {
+              if (parseInt(item.order, 10) >= notMovingItemOrder) {
+                item.order = parseInt(item.order, 10) - 1;
+              }
+              return item;
+            });
+
+            // Фиксируем начальные значения ячейки.
+            // Важно сохранить order, чтобы отфильтровать лишнее в localStorage
+            if (firstMovingItem) {
+              // Ячейке присваиваем номер элемента, на который навели
+              // Всех, кто больше, увеличиваем на единицу
+              targetItem.order = parseInt(firstMovingItem.getAttribute('data-order'), 10);
+              items.filter((item) => item.column === targetItem.column
+                && item.id !== targetItem.id)
+                .map((item) => {
+                  if (parseInt(item.order, 10) >= targetItem.order) {
+                    item.order = parseInt(item.order, 10) + 1;
+                  }
+                  return item;
+                });
+            } else {
+              // Навели на свободное место - ставим последним посредством length
+              // Всех, кто меньше, уменьшаем на единицу кроме тех, кто меньше изначального
+              targetItem.order = items.filter((item) => item.column === targetItem.column).length;
+            }
+          }
+          Storage.setItems(items);
+          App.update();
+        } else {
+          this.drag.style.transform = '';
+          this.drag.classList.remove('drag');
+        }
+        this.drag = null;
+      }
+    });
   }
 
   static render(item) {
     const newRow = document.createElement('li');
     newRow.setAttribute('class', 'column-item');
     newRow.setAttribute('data-id', `${item.id}`);
+    newRow.setAttribute('data-order', `${item.order}`);
     newRow.innerHTML = `<span class="column-item-title">${item.name}</span>\n`
       + '                            <div class="column-item-actions">\n'
       + '                                <svg class="column-item-actions-update" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 469.336 469.336" xml:space="preserve">\n'
