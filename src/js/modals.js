@@ -28,7 +28,12 @@ export default class Modals {
       if (!data) {
         data = [];
       }
-      data.push({ id: id(), column, name });
+      data.push({
+        id: id(),
+        order: Storage.getItems().filter((item) => item.column === column).length + 1,
+        column,
+        name,
+      });
     }
     Storage.setItems(data);
     App.update();
