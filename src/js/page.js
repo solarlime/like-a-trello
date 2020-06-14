@@ -1,7 +1,7 @@
 /* eslint-disable import/no-cycle */
 import Modals from './modals';
 import validation from './validation';
-import moveItems from './moveItems';
+import MoveItems from './moveItems';
 
 export default class Page {
   constructor() {
@@ -118,20 +118,7 @@ export default class Page {
     this.delete.addEventListener('click', () => Modals.delete(this.targetRow));
 
     this.board.addEventListener('mousedown', (event) => {
-      event.preventDefault();
-      if (event.target.classList.contains('column-item-title')) {
-        // Указатель на перетаскиваемый элемент в DOM
-        this.drag = document.elementFromPoint(event.clientX, event.clientY).closest('li.column-item');
-        if (this.drag) {
-          // Фиксируем старую колонку, понадобится при перестроении колонок
-          this.oldColumn = this.drag.closest('.column-container');
-          this.drag.style.transform = 'rotate(2deg)';
-          this.nullCoordinates.x = event.clientX;
-          this.nullCoordinates.y = event.clientY;
-          this.drag.classList.add('drag');
-          this.drag.style.cursor = 'grabbing';
-        }
-      }
+      this.drag = MoveItems.chooseItem(event, this.nullCoordinates);
     });
 
     this.board.addEventListener('mousemove', (event) => {
@@ -160,7 +147,7 @@ export default class Page {
         const column = document.elementsFromPoint(event.clientX, event.clientY)
           .find((item) => item.classList.contains('column-container'));
         if (column) {
-          moveItems(event, column, this.drag, this.oldColumn);
+          MoveItems.putItem(event, column, this.drag);
         } else {
           this.drag.style.transform = '';
           this.drag.classList.remove('drag');
