@@ -35,6 +35,21 @@ export default class MoveItems {
     return null;
   }
 
+  static dropItem(event, drag) {
+    if (drag) {
+      // Новая колонка (если это именно она)
+      const column = document.elementsFromPoint(event.clientX, event.clientY)
+        .find((item) => item.classList.contains('column-container'));
+      if (column) {
+        MoveItems.putItem(event, column, drag);
+      } else {
+        drag.style.transform = '';
+        drag.classList.remove('drag');
+      }
+    }
+    return null;
+  }
+
   static putItem(event, column, drag) {
     // Фиксируем старую колонку, понадобится при перестроении колонок
     const oldColumn = drag.closest('.column-container');
