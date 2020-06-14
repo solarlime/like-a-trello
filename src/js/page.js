@@ -117,8 +117,18 @@ export default class Page {
 
     this.delete.addEventListener('click', () => Modals.delete(this.targetRow));
 
+    this.board.addEventListener('touchstart', (event) => {
+      this.drag = MoveItems.chooseItem(event, this.nullCoordinates);
+    });
+
     this.board.addEventListener('mousedown', (event) => {
       this.drag = MoveItems.chooseItem(event, this.nullCoordinates);
+    });
+
+    this.board.addEventListener('touchmove', (event) => {
+      if (this.drag) {
+        this.drag.style.transform = `translate(${event.clientX - this.nullCoordinates.x}px, ${event.clientY - this.nullCoordinates.y}px) rotate(2deg)`;
+      }
     });
 
     this.board.addEventListener('mousemove', (event) => {
@@ -141,19 +151,12 @@ export default class Page {
       }
     });
 
+    this.board.addEventListener('touchend', (event) => {
+      this.drag = MoveItems.dropItem(event, this.drag);
+    });
+
     this.board.addEventListener('mouseup', (event) => {
-      if (this.drag) {
-        // Новая колонка (если это именно она)
-        const column = document.elementsFromPoint(event.clientX, event.clientY)
-          .find((item) => item.classList.contains('column-container'));
-        if (column) {
-          MoveItems.putItem(event, column, this.drag);
-        } else {
-          this.drag.style.transform = '';
-          this.drag.classList.remove('drag');
-        }
-        this.drag = null;
-      }
+      this.drag = MoveItems.dropItem(event, this.drag);
     });
   }
 
