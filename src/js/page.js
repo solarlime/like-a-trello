@@ -80,25 +80,11 @@ export default class Page {
    * подсказки удаляем её, иначе - отрисовываем.
    */
   addListeners() {
-    this.pluses.forEach((plus) => {
-      plus.addEventListener('click', (event) => {
-        this.targetRow = 0;
-        Modals.show.call(this, this.modalAddUpdate, this.targetRow, event.target);
-      });
-    });
-
-    this.cancels.forEach((cancel) => {
-      cancel.addEventListener('click', () => Modals.cancel.call(this));
-    });
-
-    this.board.addEventListener('click', (event) => {
+    // Функция для управляющих кнопок
+    function actionsButtons(event) {
       // event.target - не всегда <svg>: иногда <path>. Поправляем
-      const svg = () => {
-        if (!event.target.ownerSVGElement) {
-          return event.target;
-        }
-        return event.target.ownerSVGElement;
-      };
+      const svg = () => ((!event.target.ownerSVGElement)
+        ? event.target : event.target.ownerSVGElement);
       if (svg().classList.value === 'column-item-actions-update') {
         this.targetRow = svg().closest('li');
         Modals.show.call(this, this.modalAddUpdate, this.targetRow);
@@ -107,30 +93,57 @@ export default class Page {
         this.targetRow = svg().closest('li');
         Modals.show(this.modalDelete);
       }
+    }
+
+    // Обработчики для кнопок 'Add new item'
+    this.pluses.forEach((plus) => {
+      plus.addEventListener('touchend', (event) => {
+        this.targetRow = 0;
+        Modals.show.call(this, this.modalAddUpdate, this.targetRow, event.target);
+      });
+      plus.addEventListener('click', (event) => {
+        this.targetRow = 0;
+        Modals.show.call(this, this.modalAddUpdate, this.targetRow, event.target);
+      });
     });
 
+    // Обработчики для кнопок Cancel
+    this.cancels.forEach((cancel) => {
+      cancel.addEventListener('touchend', () => Modals.cancel.call(this));
+      cancel.addEventListener('click', () => Modals.cancel.call(this));
+    });
+
+    // Обработчики для кнопок 'Edit' и 'Remove'
+    this.board.addEventListener('click', (event) => actionsButtons.call(this, event));
+    this.board.addEventListener('touchend', (event) => actionsButtons.call(this, event));
+
+    // Обработчик проверки поля ввода на валидность
     this.form.querySelector('#description').addEventListener('input', (event) => {
       this.save.disabled = !validation(event.target, this.save);
     });
 
+    // Обработчики кнопки 'Save'
+    this.save.addEventListener('touchend', (event) => Modals.save(this.modalAddUpdate, event.target, this.column, this.targetRow));
     this.save.addEventListener('click', (event) => Modals.save(this.modalAddUpdate, event.target, this.column, this.targetRow));
 
+    // Обработчики кнопки 'Delete'
+    this.delete.addEventListener('touchend', () => Modals.delete(this.targetRow));
     this.delete.addEventListener('click', () => Modals.delete(this.targetRow));
 
+    // Обработчики захвата ячейки
     this.board.addEventListener('touchstart', (event) => {
       this.drag = MoveItems.chooseItem(event, this.nullCoordinates);
     });
-
     this.board.addEventListener('mousedown', (event) => {
       this.drag = MoveItems.chooseItem(event, this.nullCoordinates);
     });
 
+    // Обработчики перемещения ячейки
     this.board.addEventListener('touchmove', (event) => {
       if (this.drag) {
-        this.drag.style.transform = `translate(${event.clientX - this.nullCoordinates.x}px, ${event.clientY - this.nullCoordinates.y}px) rotate(2deg)`;
+        this.drag.style.transform = `translate(${event.changedTouches[0].clientX - this.nullCoordinates.x}px, ${event.changedTouches[0].clientY - this.nullCoordinates.y}px) rotate(2deg)`;
       }
     });
-
     this.board.addEventListener('mousemove', (event) => {
       if (this.drag) {
         this.drag.style.transform = `translate(${event.clientX - this.nullCoordinates.x}px, ${event.clientY - this.nullCoordinates.y}px) rotate(2deg)`;
@@ -151,10 +164,10 @@ export default class Page {
       }
     });
 
+    // Обработчики 'бросания' ячейки
     this.board.addEventListener('touchend', (event) => {
       this.drag = MoveItems.dropItem(event, this.drag);
     });
-
     this.board.addEventListener('mouseup', (event) => {
       this.drag = MoveItems.dropItem(event, this.drag);
     });

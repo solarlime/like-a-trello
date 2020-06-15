@@ -20,8 +20,9 @@ export default class MoveItems {
   static chooseItem(event, nullCoordinates) {
     event.preventDefault();
     if (event.target.classList.contains('column-item-title')) {
+      const eventCoordinates = () => ((event.type === 'mousedown') ? event : event.changedTouches[0]);
       // Указатель на перетаскиваемый элемент в DOM
-      const drag = document.elementFromPoint(event.clientX, event.clientY).closest('li.column-item');
+      const drag = document.elementFromPoint(eventCoordinates().clientX, eventCoordinates().clientY).closest('li.column-item');
       if (drag) {
         drag.style.transform = 'rotate(2deg)';
         // "Начало координат". Понадобится при Drag and Drop
@@ -37,11 +38,13 @@ export default class MoveItems {
 
   static dropItem(event, drag) {
     if (drag) {
+      const eventCoordinates = () => ((event.type === 'mouseup') ? event : event.changedTouches[0]);
       // Новая колонка (если это именно она)
-      const column = document.elementsFromPoint(event.clientX, event.clientY)
+      const column = document
+        .elementsFromPoint(eventCoordinates().clientX, eventCoordinates().clientY)
         .find((item) => item.classList.contains('column-container'));
       if (column) {
-        MoveItems.putItem(event, column, drag);
+        MoveItems.putItem(eventCoordinates(), column, drag);
       } else {
         drag.style.transform = '';
         drag.classList.remove('drag');
