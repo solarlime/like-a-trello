@@ -26,8 +26,8 @@ export default class MoveItems {
       if (drag) {
         drag.style.transform = 'rotate(2deg)';
         // "Начало координат". Понадобится при Drag and Drop
-        nullCoordinates.x = event.clientX;
-        nullCoordinates.y = event.clientY;
+        nullCoordinates.x = eventCoordinates().clientX;
+        nullCoordinates.y = eventCoordinates().clientY;
         drag.classList.add('drag');
         drag.style.cursor = 'grabbing';
         return drag;
