@@ -8,6 +8,8 @@ export default class Page {
     this.page = document.body;
     this.board = this.page.querySelector('.board');
     this.pluses = this.page.querySelectorAll('.new');
+    this.scrollLeft = this.page.querySelector('.scroll-left');
+    this.scrollRight = this.page.querySelector('.scroll-right');
     this.modalAddUpdate = this.page.querySelector('.modal-add-update');
     this.modalDelete = this.page.querySelector('.modal-delete');
     this.form = this.page.querySelector('form#add-and-update');
@@ -138,9 +140,20 @@ export default class Page {
       this.drag = MoveItems.chooseItem(event, this.nullCoordinates);
     });
 
+    this.scrollLeft.addEventListener('mousemove', () => window.scrollBy({ left: -50, behavior: 'smooth' }));
+    this.scrollRight.addEventListener('mousemove', () => window.scrollBy({ left: 50, behavior: 'smooth' }));
+
     // Обработчики перемещения ячейки
     this.board.addEventListener('touchmove', (event) => {
       if (this.drag) {
+        if (window.innerWidth - this.drag.getBoundingClientRect().right <= 10) {
+          const mouseMove = new Event('mousemove');
+          this.scrollRight.dispatchEvent(mouseMove);
+        }
+        if (this.drag.getBoundingClientRect().left <= 10) {
+          const mouseMove = new Event('mousemove');
+          this.scrollLeft.dispatchEvent(mouseMove);
+        }
         this.drag.style.transform = `translate(${event.changedTouches[0].clientX - this.nullCoordinates.x}px, ${event.changedTouches[0].clientY - this.nullCoordinates.y}px) rotate(2deg)`;
       }
     });
