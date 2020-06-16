@@ -18,8 +18,9 @@ export default class Page {
     this.delete = this.page.querySelector('button.delete');
     this.column = 'todo';
     this.drag = null;
-    // "Начало координат". Понадобится при Drag and Drop
-    this.nullCoordinates = { x: 0, y: 0 };
+    // "Дельта" - разница между курсором и левым верхним углом
+    // перетаскиваемого элемента. Понадобится при Drag and Drop
+    this.delta = { x: 0, y: 0 };
     // Example of the data
     // const example = {
     //   items: [
@@ -134,10 +135,10 @@ export default class Page {
 
     // Обработчики захвата ячейки
     this.board.addEventListener('touchstart', (event) => {
-      this.drag = MoveItems.chooseItem(event, this.nullCoordinates);
+      this.drag = MoveItems.chooseItem(event, this.delta);
     });
     this.board.addEventListener('mousedown', (event) => {
-      this.drag = MoveItems.chooseItem(event, this.nullCoordinates);
+      this.drag = MoveItems.chooseItem(event, this.delta);
     });
 
     this.scrollLeft.addEventListener('mousemove', () => window.scrollBy({ left: -50, behavior: 'smooth' }));
@@ -146,20 +147,24 @@ export default class Page {
     // Обработчики перемещения ячейки
     this.board.addEventListener('touchmove', (event) => {
       if (this.drag) {
-        if (window.innerWidth - this.drag.getBoundingClientRect().right <= 10) {
+        if (window.innerWidth - event.changedTouches[0].clientX <= 50) {
           const mouseMove = new Event('mousemove');
           this.scrollRight.dispatchEvent(mouseMove);
         }
-        if (this.drag.getBoundingClientRect().left <= 10) {
+        if (event.changedTouches[0].clientX <= 50) {
           const mouseMove = new Event('mousemove');
           this.scrollLeft.dispatchEvent(mouseMove);
         }
-        this.drag.style.transform = `translate(${event.changedTouches[0].clientX - this.nullCoordinates.x}px, ${event.changedTouches[0].clientY - this.nullCoordinates.y}px) rotate(2deg)`;
+        this.drag.style.transform = 'rotate(2deg)';
+        this.drag.style.left = `${event.changedTouches[0].pageX - this.delta.x}px`;
+        this.drag.style.top = `${event.changedTouches[0].pageY - this.delta.y}px`;
       }
     });
     this.board.addEventListener('mousemove', (event) => {
       if (this.drag) {
-        this.drag.style.transform = `translate(${event.clientX - this.nullCoordinates.x}px, ${event.clientY - this.nullCoordinates.y}px) rotate(2deg)`;
+        this.drag.style.transform = 'rotate(2deg)';
+        this.drag.style.left = `${event.pageX - this.delta.x}px`;
+        this.drag.style.top = `${event.pageY - this.delta.y}px`;
         /*
         const column = document.elementsFromPoint(event.clientX, event.clientY)
           .find((item) => item.classList.contains('column-container'));

@@ -17,7 +17,7 @@ function changeOrder(items, targetItem, notMovingItemOrder) {
 }
 
 export default class MoveItems {
-  static chooseItem(event, nullCoordinates) {
+  static chooseItem(event, delta) {
     event.preventDefault();
     if (event.target.classList.contains('column-item-title')) {
       const eventCoordinates = () => ((event.type === 'mousedown') ? event : event.changedTouches[0]);
@@ -25,9 +25,10 @@ export default class MoveItems {
       const drag = document.elementFromPoint(eventCoordinates().clientX, eventCoordinates().clientY).closest('li.column-item');
       if (drag) {
         drag.style.transform = 'rotate(2deg)';
-        // "Начало координат". Понадобится при Drag and Drop
-        nullCoordinates.x = eventCoordinates().clientX;
-        nullCoordinates.y = eventCoordinates().clientY;
+        delta.x = eventCoordinates().pageX - window.scrollX
+          - drag.getBoundingClientRect().left;
+        delta.y = eventCoordinates().pageY - window.scrollY
+          - drag.getBoundingClientRect().top;
         drag.classList.add('drag');
         drag.style.cursor = 'grabbing';
         return drag;
