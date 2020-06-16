@@ -160,6 +160,21 @@ main {
     fill: crimson;
 }
 
+.scroll-left, .scroll-right {
+    position: fixed;
+    top: 0;
+    width: 20px;
+    height: 100vh;
+}
+
+.scroll-left {
+    left: 0;
+}
+
+.scroll-right {
+    right: 0
+}
+
 .modal-container {
     position: fixed;
     top: 0;
