@@ -146,15 +146,17 @@ export default class Page {
 
     // Обработчики перемещения ячейки
     this.board.addEventListener('touchmove', (event) => {
+      if (document
+        .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
+        .find((item) => item === this.scrollLeft)) {
+        window.scrollBy({ left: -50, behavior: 'smooth' });
+      }
+      if (document
+        .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
+        .find((item) => item === this.scrollRight)) {
+        window.scrollBy({ left: 50, behavior: 'smooth' });
+      }
       if (this.drag) {
-        if (window.innerWidth - event.changedTouches[0].clientX <= 50) {
-          const mouseMove = new Event('mousemove');
-          this.scrollRight.dispatchEvent(mouseMove);
-        }
-        if (event.changedTouches[0].clientX <= 50) {
-          const mouseMove = new Event('mousemove');
-          this.scrollLeft.dispatchEvent(mouseMove);
-        }
         this.drag.style.transform = 'rotate(2deg)';
         this.drag.style.left = `${event.changedTouches[0].pageX - this.delta.x}px`;
         this.drag.style.top = `${event.changedTouches[0].pageY - this.delta.y}px`;
