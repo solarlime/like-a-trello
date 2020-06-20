@@ -27,7 +27,6 @@ export default class MoveItems {
         drag.style.transform = 'rotate(2deg)';
         delta.x = eventCoordinates().pageX - window.scrollX
           - drag.getBoundingClientRect().left;
-        console.log(marginTopForMoving)
         delta.y = eventCoordinates().pageY - window.scrollY
           - drag.getBoundingClientRect().top + marginTopForMoving;
         drag.classList.add('drag');
