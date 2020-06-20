@@ -137,6 +137,10 @@ export default class Page {
     // Обработчики захвата ячейки
     this.board.addEventListener('touchstart', (event) => {
       this.drag = MoveItems.chooseItem(event, this.delta);
+      if (!this.drag) {
+        // Начальная точка скроллинга
+        this.start = event.changedTouches[0].clientX + this.main.scrollLeft;
+      }
     });
     this.board.addEventListener('mousedown', (event) => {
       this.drag = MoveItems.chooseItem(event, this.delta);
@@ -147,6 +151,9 @@ export default class Page {
 
     // Обработчики перемещения ячейки
     this.board.addEventListener('touchmove', (event) => {
+      // Конечная точка скроллинга
+      this.end = event.changedTouches[0].clientX;
+      this.main.scrollLeft = this.start - this.end;
       if (document
         .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
         .find((item) => item === this.scrollLeft)) {

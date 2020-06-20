@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap');
 
 :root {
+    --header: 100;
     --item-length: calc((100vw - 20px) / 3);
 }
 
@@ -23,12 +24,11 @@ body {
 }
 
 .header {
-    --margin-top-for-moving: 100;
     display: flex;
     align-items: center;
     justify-content: center;
     width: calc(100vw - 40px);
-    height: calc(var(--margin-top-for-moving) * 1px);
+    height: calc(var(--header) * 1px);
     padding: 0 20px;
     color: white;
     background: rgba(0, 0, 0, 0.5);
@@ -42,7 +42,7 @@ body {
 
 main {
     width: 100vw;
-    height: 80%;
+    height: calc(100% - var(--header) * 1px);
     box-sizing: border-box;
     margin: 0;
     padding: 15px 0;
@@ -325,7 +325,11 @@ label {
 @media (max-width: 410px), (max-height: 700px) {
 
     .header {
-        height: calc(var(--margin-top-for-moving) * 1px - 30px);
+        height: calc(var(--header) * 1px - 30px);
+    }
+
+    main {
+        height: calc(100% - var(--header) * 1px + 30px);
     }
 
     .header-title {
