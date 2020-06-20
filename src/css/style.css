@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap');
 
+:root {
+    --item-length: calc((100vw - 20px) / 3);
+}
+
 html {
     font-family: "IBM Plex Sans", Arial, sans-serif;
     font-size: 16px;
@@ -11,38 +15,23 @@ body {
     min-width: 320px;
     width: auto;
     height: 100vh;
-    margin: 0;
-}
-
-.background {
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
     background-color: #25272a;
     background-image: url("../img/nothern-lights.jpg");
     background-size: cover;
     background-repeat: no-repeat;
-}
-
-.header, .header-shadow {
-    --margin-top-for-moving: 100;
-    height: calc(var(--margin-top-for-moving) * 1px);
-    padding: 0 20px;
+    margin: 0;
 }
 
 .header {
-    position: fixed;
-    top: 0;
+    --margin-top-for-moving: 100;
     display: flex;
     align-items: center;
     justify-content: center;
     width: calc(100vw - 40px);
+    height: calc(var(--margin-top-for-moving) * 1px);
+    padding: 0 20px;
     color: white;
     background: rgba(0, 0, 0, 0.5);
-}
-
-.header-shadow {
-    width: auto;
 }
 
 .header-title {
@@ -53,22 +42,26 @@ body {
 
 main {
     width: 100vw;
+    height: 80%;
     box-sizing: border-box;
+    margin: 0;
+    padding: 15px 0;
+    overflow: auto;
+    scrollbar-width: none;
 }
 
 .board {
-    position: relative;
     display: flex;
-    min-width: 890px;
+    min-width: 850px;
+    height: 100%;
     list-style: none;
     padding: 0 20px;
-    margin: 15px 0 0 0;
-    overflow: auto;
+    margin: 0;
 }
 
 .board-item {
-    width: calc(calc(100% - 40px) / 3);
-    height: 60vh;
+    min-width: 250px;
+    width: calc(var(--item-length) * 1px);
     margin-right: 20px;
     background: rgba(0, 0, 0, 0.5);
     padding: 10px;
@@ -94,13 +87,13 @@ main {
     flex-grow: 1;
     list-style: none;
     padding: 1px;
-    margin: 5px 0;
+    margin: 10px 0;
     color: white;
     overflow-y: auto;
     scrollbar-width: none;
 }
 
-.column-container::-webkit-scrollbar {
+.column-container::-webkit-scrollbar, main::-webkit-scrollbar {
     width: 0;
     background: transparent;
 }
@@ -117,16 +110,25 @@ main {
     cursor: grab;
 }
 
+.column-item:first-child {
+    margin-top: 0;
+}
+
+.column-item:last-child {
+    margin-bottom: 0;
+}
+
 .drag {
     position: absolute;
-    width: calc((100% - 80px) / 3 - 20px);
+    min-width: 250px;
+    width: var(--item-length);
 }
 
 .new {
     display: block;
     width: calc(100% - 20px);
     box-sizing: border-box;
-    padding: 10px 0;
+    padding: 5px 0;
     margin: auto 10px 0 10px;
     text-align: center;
     background: transparent;
@@ -321,7 +323,7 @@ label {
 
 @media (max-width: 410px), (max-height: 700px) {
 
-    .header, .header-shadow {
+    .header {
         height: calc(var(--margin-top-for-moving) * 1px - 30px);
     }
 

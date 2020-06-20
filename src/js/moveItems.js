@@ -17,7 +17,7 @@ function changeOrder(items, targetItem, notMovingItemOrder) {
 }
 
 export default class MoveItems {
-  static chooseItem(event, delta, marginTopForMoving) {
+  static chooseItem(event, delta) {
     event.preventDefault();
     if (event.target.classList.contains('column-item-title')) {
       const eventCoordinates = () => ((event.type === 'mousedown') ? event : event.changedTouches[0]);
@@ -25,11 +25,11 @@ export default class MoveItems {
       const drag = document.elementFromPoint(eventCoordinates().clientX, eventCoordinates().clientY).closest('li.column-item');
       if (drag) {
         drag.style.transform = 'rotate(2deg)';
-        delta.x = eventCoordinates().pageX - window.scrollX
-          - drag.getBoundingClientRect().left;
-        delta.y = eventCoordinates().pageY - window.scrollY
-          - drag.getBoundingClientRect().top + marginTopForMoving;
+        delta.x = eventCoordinates().pageX - drag.getBoundingClientRect().left;
+        delta.y = eventCoordinates().pageY - drag.getBoundingClientRect().top;
         drag.classList.add('drag');
+        drag.style.left = `${eventCoordinates().pageX - delta.x}px`;
+        drag.style.top = `${eventCoordinates().pageY - delta.y}px`;
         drag.style.cursor = 'grabbing';
         return drag;
       }

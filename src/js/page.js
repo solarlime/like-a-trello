@@ -6,6 +6,7 @@ import MoveItems from './moveItems';
 export default class Page {
   constructor() {
     this.page = document.body;
+    this.main = this.page.querySelector('main');
     this.board = this.page.querySelector('.board');
     this.pluses = this.page.querySelectorAll('.new');
     this.scrollLeft = this.page.querySelector('.scroll-left');
@@ -76,9 +77,6 @@ export default class Page {
     // };
     // localStorage.setItem('items', JSON.stringify(example.items));
     this.save.disabled = true;
-    // drag позиционируется относительно board, что даёт лишний отступ по вертикали. Исправляем
-    this.marginTopForMoving = parseInt(window.getComputedStyle(document.querySelector('.header'))
-      .getPropertyValue('--margin-top-for-moving'), 10) - 15;
   }
 
   /**
@@ -138,40 +136,38 @@ export default class Page {
 
     // Обработчики захвата ячейки
     this.board.addEventListener('touchstart', (event) => {
-      this.drag = MoveItems.chooseItem(event, this.delta, this.marginTopForMoving);
+      this.drag = MoveItems.chooseItem(event, this.delta);
     });
     this.board.addEventListener('mousedown', (event) => {
-      this.drag = MoveItems.chooseItem(event, this.delta, this.marginTopForMoving);
+      this.drag = MoveItems.chooseItem(event, this.delta);
     });
 
-    this.scrollLeft.addEventListener('mousemove', () => window.scrollBy({ left: -50, behavior: 'smooth' }));
-    this.scrollRight.addEventListener('mousemove', () => window.scrollBy({ left: 50, behavior: 'smooth' }));
+    this.scrollLeft.addEventListener('mousemove', () => this.main.scrollBy({ left: -50, behavior: 'smooth' }));
+    this.scrollRight.addEventListener('mousemove', () => this.main.scrollBy({ left: 50, behavior: 'smooth' }));
 
     // Обработчики перемещения ячейки
     this.board.addEventListener('touchmove', (event) => {
       if (document
         .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
         .find((item) => item === this.scrollLeft)) {
-        window.scrollBy({ left: -50, behavior: 'smooth' });
+        this.main.scrollBy({ left: -50, behavior: 'smooth' });
       }
       if (document
         .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
         .find((item) => item === this.scrollRight)) {
-        alert('Before scrollBy');
-        window.scrollBy({ left: 50, behavior: 'smooth' });
-        alert('After scrollBy');
+        this.main.scrollBy({ left: 50, behavior: 'smooth' });
       }
       if (this.drag) {
         this.drag.style.transform = 'rotate(2deg)';
-        this.drag.style.left = `${event.changedTouches[0].pageX - this.delta.x}px`;
-        this.drag.style.top = `${event.changedTouches[0].pageY - this.delta.y}px`;
+        this.drag.style.left = `${event.changedTouches[0].clientX - this.delta.x}px`;
+        this.drag.style.top = `${event.changedTouches[0].clientY - this.delta.y}px`;
       }
     });
     this.board.addEventListener('mousemove', (event) => {
       if (this.drag) {
         this.drag.style.transform = 'rotate(2deg)';
-        this.drag.style.left = `${event.pageX - this.delta.x}px`;
-        this.drag.style.top = `${event.pageY - this.delta.y}px`;
+        this.drag.style.left = `${event.clientX - this.delta.x}px`;
+        this.drag.style.top = `${event.clientY - this.delta.y}px`;
         /*
         const column = document.elementsFromPoint(event.clientX, event.clientY)
           .find((item) => item.classList.contains('column-container'));
