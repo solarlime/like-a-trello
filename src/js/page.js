@@ -155,18 +155,17 @@ export default class Page {
       if (!this.drag) {
         this.end = event.changedTouches[0].clientX;
         this.main.scrollLeft = this.start - this.end;
-      }
-      if (document
-        .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
-        .find((item) => item === this.scrollLeft)) {
-        this.main.scrollBy({ left: -50, behavior: 'smooth' });
-      }
-      if (document
-        .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
-        .find((item) => item === this.scrollRight)) {
-        this.main.scrollBy({ left: 50, behavior: 'smooth' });
-      }
-      if (this.drag) {
+      } else {
+        if (document
+          .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
+          .find((item) => item === this.scrollLeft)) {
+          this.main.scrollBy({ left: -50, behavior: 'smooth' });
+        }
+        if (document
+          .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
+          .find((item) => item === this.scrollRight)) {
+          this.main.scrollBy({ left: 50, behavior: 'smooth' });
+        }
         this.drag.style.transform = 'rotate(2deg)';
         this.drag.style.left = `${event.changedTouches[0].clientX - this.delta.x}px`;
         this.drag.style.top = `${event.changedTouches[0].clientY - this.delta.y}px`;
@@ -177,20 +176,6 @@ export default class Page {
         this.drag.style.transform = 'rotate(2deg)';
         this.drag.style.left = `${event.clientX - this.delta.x}px`;
         this.drag.style.top = `${event.clientY - this.delta.y}px`;
-        /*
-        const column = document.elementsFromPoint(event.clientX, event.clientY)
-          .find((item) => item.classList.contains('column-container'));
-        if (column) {
-          const firstMovingItem = document.elementsFromPoint(event.clientX, event.clientY)
-            .find((item) => item.classList.contains('column-item')
-              && item.getAttribute('data-id') !== this.drag.getAttribute('data-id'));
-          if (firstMovingItem) {
-            this.oldFirstMovingItem = firstMovingItem;
-            firstMovingItem.style.marginTop = '30px';
-          } else {
-            this.oldFirstMovingItem.style.marginTop = '';
-          }
-        } */
       }
     });
 
