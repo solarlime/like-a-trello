@@ -17,7 +17,7 @@ function changeOrder(items, targetItem, notMovingItemOrder) {
 }
 
 export default class MoveItems {
-  static chooseItem(event, delta) {
+  static chooseItem(event, delta, marginTopForMoving) {
     event.preventDefault();
     if (event.target.classList.contains('column-item-title')) {
       const eventCoordinates = () => ((event.type === 'mousedown') ? event : event.changedTouches[0]);
@@ -27,8 +27,9 @@ export default class MoveItems {
         drag.style.transform = 'rotate(2deg)';
         delta.x = eventCoordinates().pageX - window.scrollX
           - drag.getBoundingClientRect().left;
+        console.log(marginTopForMoving)
         delta.y = eventCoordinates().pageY - window.scrollY
-          - drag.getBoundingClientRect().top;
+          - drag.getBoundingClientRect().top + marginTopForMoving;
         drag.classList.add('drag');
         drag.style.cursor = 'grabbing';
         return drag;

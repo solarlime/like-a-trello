@@ -76,6 +76,9 @@ export default class Page {
     // };
     // localStorage.setItem('items', JSON.stringify(example.items));
     this.save.disabled = true;
+    // drag позиционируется относительно board, что даёт лишний отступ по вертикали. Исправляем
+    this.marginTopForMoving = parseInt(window.getComputedStyle(document.querySelector('.header'))
+      .getPropertyValue('--margin-top-for-moving'), 10) - 15;
   }
 
   /**
@@ -135,10 +138,10 @@ export default class Page {
 
     // Обработчики захвата ячейки
     this.board.addEventListener('touchstart', (event) => {
-      this.drag = MoveItems.chooseItem(event, this.delta);
+      this.drag = MoveItems.chooseItem(event, this.delta, this.marginTopForMoving);
     });
     this.board.addEventListener('mousedown', (event) => {
-      this.drag = MoveItems.chooseItem(event, this.delta);
+      this.drag = MoveItems.chooseItem(event, this.delta, this.marginTopForMoving);
     });
 
     this.scrollLeft.addEventListener('mousemove', () => window.scrollBy({ left: -50, behavior: 'smooth' }));
@@ -154,7 +157,9 @@ export default class Page {
       if (document
         .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
         .find((item) => item === this.scrollRight)) {
+        alert('Before scrollBy');
         window.scrollBy({ left: 50, behavior: 'smooth' });
+        alert('After scrollBy');
       }
       if (this.drag) {
         this.drag.style.transform = 'rotate(2deg)';

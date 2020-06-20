@@ -12,7 +12,6 @@ body {
     width: auto;
     height: 100vh;
     margin: 0;
-    overflow-y: hidden;
 }
 
 .background {
@@ -26,7 +25,8 @@ body {
 }
 
 .header, .header-shadow {
-    height: 100px;
+    --margin-top-for-moving: 100;
+    height: calc(var(--margin-top-for-moving) * 1px);
     padding: 0 20px;
 }
 
@@ -52,19 +52,18 @@ body {
 }
 
 main {
-    position: absolute;
-    top: 0;
-    min-width: 890px;
     width: 100vw;
     box-sizing: border-box;
-    padding: 0 20px;
 }
 
 .board {
+    position: relative;
     display: flex;
+    min-width: 890px;
     list-style: none;
-    padding: 0;
-    margin: 20px 0 0 0;
+    padding: 0 20px;
+    margin: 15px 0 0 0;
+    overflow: auto;
 }
 
 .board-item {
@@ -321,8 +320,9 @@ label {
 }
 
 @media (max-width: 410px), (max-height: 700px) {
+
     .header, .header-shadow {
-        height: 70px;
+        height: calc(var(--margin-top-for-moving) * 1px - 30px);
     }
 
     .header-title {
