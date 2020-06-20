@@ -61,7 +61,7 @@ main {
 
 .board-item {
     min-width: 250px;
-    width: calc(var(--item-length) * 1px);
+    width: var(--item-length);
     margin-right: 20px;
     background: rgba(0, 0, 0, 0.5);
     padding: 10px;
@@ -255,6 +255,7 @@ label {
 
 .file-container {
     position: relative;
+    display: block;
 }
 
 .file-container::after {
