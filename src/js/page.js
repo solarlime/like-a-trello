@@ -152,8 +152,10 @@ export default class Page {
     // Обработчики перемещения ячейки
     this.board.addEventListener('touchmove', (event) => {
       // Конечная точка скроллинга
-      this.end = event.changedTouches[0].clientX;
-      this.main.scrollLeft = this.start - this.end;
+      if (!this.drag) {
+        this.end = event.changedTouches[0].clientX;
+        this.main.scrollLeft = this.start - this.end;
+      }
       if (document
         .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
         .find((item) => item === this.scrollLeft)) {
