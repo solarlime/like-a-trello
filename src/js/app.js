@@ -2,6 +2,7 @@
 import Storage from './storage';
 import Page from './page';
 import Modals from './modals';
+import Utils from './utils';
 
 export default class App {
   static init() {
@@ -14,7 +15,7 @@ export default class App {
     Modals.reset();
     document.querySelectorAll('li.column-item').forEach((item) => item.remove());
     if (Storage.getItems()) {
-      Storage.getItems().sort((a, b) => a.order - b.order).forEach((item) => Page.render(item));
+      Storage.getItems().sort((a, b) => a.order - b.order).forEach((item) => Utils.render(item));
     }
   }
 }
