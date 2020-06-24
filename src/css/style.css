@@ -45,7 +45,7 @@ main {
     height: calc(100% - var(--header) * 1px);
     box-sizing: border-box;
     margin: 0;
-    padding: 15px 0;
+    padding: 15px 0 45px 0;
     overflow: auto;
     scrollbar-width: none;
 }
@@ -229,6 +229,7 @@ label {
 
 .file {
     padding: 0;
+    margin-bottom: 3px;
 }
 
 .file, .description {
@@ -275,14 +276,65 @@ label {
     display: block;
     width: 100%;
     height: 100%;
+    padding: 3px;
     box-sizing: border-box;
     color: white;
     z-index: 2;
     border: 1px dashed white;
+    font-size: 0.8rem;
+    cursor: pointer;
 }
 
-.fake-file-chooser {
-    text-decoration: underline;
+.files {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+}
+
+.file-element {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: 40px;
+    box-sizing: border-box;
+    border: 1px solid white;
+    margin: 3px 6px 3px 0;
+}
+
+.file-element:last-child {
+    margin-right: 0;
+}
+
+.preview {
+    min-width: 60px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.preview-image {
+    height: 100%;
+    object-fit: cover;
+}
+
+.file-remove {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 15px;
+    height: 15px;
+    fill: crimson;
+    box-sizing: border-box;
+    border: 1px solid white;
+    background: #25272a;
+    cursor: pointer;
 }
 
 #file {
@@ -301,6 +353,7 @@ label {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
+    margin-top: 3px;
 }
 
 .save, .cancel, .delete {
@@ -323,6 +376,10 @@ label {
 }
 
 @media (max-width: 410px), (max-height: 700px) {
+
+    html {
+        font-size: 14px;
+    }
 
     .header {
         height: calc(var(--header) * 1px - 30px);

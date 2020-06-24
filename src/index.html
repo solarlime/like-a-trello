@@ -57,13 +57,14 @@
                 <label class="file">
                     File (optional)
                     <span class="file-container">
-                        <input id="file" type="file">
+                        <input id="file" type="file" multiple>
                         <span class="fake-file">
-                            Drop your files here or <span class="fake-file-chooser">choose them</span>
+                            Drop your files here or choose them. Be careful: localStorage is only 5 MB in total!
                         </span>
                     </span>
                     <span class="error error-file hidden"></span>
                 </label>
+                <ul class="files"></ul>
                 <div class="button-container">
                     <button class="save" type="button">Save</button>
                     <button class="cancel" type="button">Cancel</button>
