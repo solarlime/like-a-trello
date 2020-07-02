@@ -3,6 +3,15 @@ export default class Utils {
     return (!target.ownerSVGElement) ? target : target.ownerSVGElement;
   }
 
+  static readFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.addEventListener('load', (event) => resolve(event.target.result));
+      reader.addEventListener('error', (event) => reject(event.target.error));
+      reader.readAsDataURL(file);
+    });
+  }
+
   static render(item) {
     const newRow = document.createElement('li');
     newRow.setAttribute('class', 'column-item');
