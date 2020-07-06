@@ -141,8 +141,8 @@ export default class Page {
     });
 
     // Обработчики кнопки 'Save'
-    this.save.addEventListener('touchend', (event) => Modals.save(this.modalAddUpdate, event.target, this.column, this.targetRow));
-    this.save.addEventListener('click', (event) => Modals.save(this.modalAddUpdate, event.target, this.column, this.targetRow));
+    this.save.addEventListener('touchend', (event) => Modals.save(this.modalAddUpdate, event.target, this.column, this.targetRow, this.filesToSave));
+    this.save.addEventListener('click', (event) => Modals.save(this.modalAddUpdate, event.target, this.column, this.targetRow, this.filesToSave));
 
     // Обработчики кнопки 'Delete'
     this.delete.addEventListener('touchend', () => Modals.delete(this.targetRow));
@@ -175,13 +175,13 @@ export default class Page {
         // Начальная точка скроллинга
         this.start = event.changedTouches[0].clientX + this.main.scrollLeft;
       } else {
-        Utils.renderSpace.call(this, event, this.drag, 'down');
+        Utils.renderSpace.call(this, Utils.eventCoordinates(event), this.drag, 'down');
       }
     });
     this.board.addEventListener('mousedown', (event) => {
       this.drag = MoveItems.chooseItem(event, this.delta);
       if (this.drag) {
-        Utils.renderSpace.call(this, event, this.drag, 'down');
+        Utils.renderSpace.call(this, Utils.eventCoordinates(event), this.drag, 'down');
       }
     });
 
@@ -208,7 +208,7 @@ export default class Page {
         this.drag.style.transform = 'rotate(2deg)';
         this.drag.style.left = `${event.changedTouches[0].clientX - this.delta.x}px`;
         this.drag.style.top = `${event.changedTouches[0].clientY - this.delta.y}px`;
-        Utils.renderSpace.call(this, event, this.drag);
+        Utils.renderSpace.call(this, Utils.eventCoordinates(event), this.drag);
       }
     });
     this.board.addEventListener('mousemove', (event) => {
@@ -216,7 +216,7 @@ export default class Page {
         this.drag.style.transform = 'rotate(2deg)';
         this.drag.style.left = `${event.clientX - this.delta.x}px`;
         this.drag.style.top = `${event.clientY - this.delta.y}px`;
-        Utils.renderSpace.call(this, event, this.drag);
+        Utils.renderSpace.call(this, Utils.eventCoordinates(event), this.drag);
       }
     });
 
@@ -226,14 +226,14 @@ export default class Page {
       if (space) {
         space.remove();
       }
-      this.drag = MoveItems.dropItem(event, this.drag, this.place);
+      this.drag = MoveItems.dropItem(Utils.eventCoordinates(event), this.drag, this.place);
     });
     this.board.addEventListener('mouseup', (event) => {
       const space = this.board.querySelector('.column-space');
       if (space) {
         space.remove();
       }
-      this.drag = MoveItems.dropItem(event, this.drag, this.place);
+      this.drag = MoveItems.dropItem(Utils.eventCoordinates(event), this.drag, this.place);
     });
   }
 }
