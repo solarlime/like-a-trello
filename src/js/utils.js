@@ -3,6 +3,11 @@ export default class Utils {
     return (!target.ownerSVGElement) ? target : target.ownerSVGElement;
   }
 
+  static eventCoordinates(event) {
+    console.log(event.type);
+    return (event.changedTouches) ? event.changedTouches[0] : event;
+  }
+
   static renderSpace(event, drag, theSameItem = 0) {
     const pointItem = document.elementsFromPoint(event.clientX, event.clientY)
       .find((item) => item.classList.contains('column-item')
