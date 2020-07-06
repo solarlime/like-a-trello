@@ -27,13 +27,12 @@ export default class MoveItems {
 
   static dropItem(event, drag, place) {
     if (drag) {
-      const eventCoordinates = () => ((event.type === 'mouseup') ? event : event.changedTouches[0]);
       // Новая колонка (если это именно она)
       const column = document
-        .elementsFromPoint(eventCoordinates().clientX, eventCoordinates().clientY)
+        .elementsFromPoint(event.clientX, event.clientY)
         .find((item) => item.classList.contains('column-container'));
       if (column) {
-        MoveItems.putItem(eventCoordinates(), column, drag, place);
+        MoveItems.putItem(event, column, drag, place);
       } else {
         drag.style.transform = '';
         drag.classList.remove('drag');
