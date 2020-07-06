@@ -21,6 +21,7 @@ export default class Page {
     this.fileChooser = this.page.querySelector('input#file');
     this.column = 'todo';
     this.drag = null;
+    this.place = null;
     // "Дельта" - разница между курсором и левым верхним углом
     // перетаскиваемого элемента. Понадобится при Drag and Drop
     this.delta = { x: 0, y: 0 };
@@ -173,14 +174,19 @@ export default class Page {
       if (!this.drag) {
         // Начальная точка скроллинга
         this.start = event.changedTouches[0].clientX + this.main.scrollLeft;
+      } else {
+        Utils.renderSpace.call(this, event, this.drag, 'down');
       }
     });
     this.board.addEventListener('mousedown', (event) => {
       this.drag = MoveItems.chooseItem(event, this.delta);
+      if (this.drag) {
+        Utils.renderSpace.call(this, event, this.drag, 'down');
+      }
     });
 
-    this.scrollLeft.addEventListener('mousemove', () => this.main.scrollBy({ left: -50, behavior: 'smooth' }));
-    this.scrollRight.addEventListener('mousemove', () => this.main.scrollBy({ left: 50, behavior: 'smooth' }));
+    this.scrollLeft.addEventListener('mousemove', () => this.main.scrollBy({ left: -100, behavior: 'smooth' }));
+    this.scrollRight.addEventListener('mousemove', () => this.main.scrollBy({ left: 100, behavior: 'smooth' }));
 
     // Обработчики перемещения ячейки
     this.board.addEventListener('touchmove', (event) => {
@@ -192,16 +198,17 @@ export default class Page {
         if (document
           .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
           .find((item) => item === this.scrollLeft)) {
-          this.main.scrollBy({ left: -50, behavior: 'smooth' });
+          this.main.scrollBy({ left: -100, behavior: 'smooth' });
         }
         if (document
           .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
           .find((item) => item === this.scrollRight)) {
-          this.main.scrollBy({ left: 50, behavior: 'smooth' });
+          this.main.scrollBy({ left: 100, behavior: 'smooth' });
         }
         this.drag.style.transform = 'rotate(2deg)';
         this.drag.style.left = `${event.changedTouches[0].clientX - this.delta.x}px`;
         this.drag.style.top = `${event.changedTouches[0].clientY - this.delta.y}px`;
+        Utils.renderSpace.call(this, event, this.drag);
       }
     });
     this.board.addEventListener('mousemove', (event) => {
@@ -209,15 +216,24 @@ export default class Page {
         this.drag.style.transform = 'rotate(2deg)';
         this.drag.style.left = `${event.clientX - this.delta.x}px`;
         this.drag.style.top = `${event.clientY - this.delta.y}px`;
+        Utils.renderSpace.call(this, event, this.drag);
       }
     });
 
     // Обработчики 'бросания' ячейки
     this.board.addEventListener('touchend', (event) => {
-      this.drag = MoveItems.dropItem(event, this.drag);
+      const space = this.board.querySelector('.column-space');
+      if (space) {
+        space.remove();
+      }
+      this.drag = MoveItems.dropItem(event, this.drag, this.place);
     });
     this.board.addEventListener('mouseup', (event) => {
-      this.drag = MoveItems.dropItem(event, this.drag);
+      const space = this.board.querySelector('.column-space');
+      if (space) {
+        space.remove();
+      }
+      this.drag = MoveItems.dropItem(event, this.drag, this.place);
     });
   }
 }
