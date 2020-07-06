@@ -3,6 +3,41 @@ export default class Utils {
     return (!target.ownerSVGElement) ? target : target.ownerSVGElement;
   }
 
+  static renderSpace(event, drag, theSameItem = 0) {
+    const pointItem = document.elementsFromPoint(event.clientX, event.clientY)
+      .find((item) => item.classList.contains('column-item')
+        && item.getAttribute('data-id') !== drag.getAttribute('data-id'));
+    const pointColumn = document.elementsFromPoint(event.clientX, event.clientY)
+      .find((item) => item.classList.contains('column-container'));
+    const space = document.querySelector('.column-space');
+    const spaceToRemove = drag.closest('.column-container')
+      ? drag.closest('.column-container').querySelector('.column-space') : null;
+    if (pointColumn && spaceToRemove
+      && pointColumn.id !== drag.closest('.column-container').id) {
+      spaceToRemove.remove();
+    }
+    if (pointItem) {
+      const element = document.createElement('div');
+      element.textContent = 'Put the item here';
+      element.classList.add('column-space');
+      if (space) {
+        space.remove();
+      }
+      if (!theSameItem) {
+        if (event.pageY
+          > window.scrollY + pointItem.getBoundingClientRect().top + pointItem.offsetHeight / 2) {
+          pointItem.after(element);
+        } else {
+          pointItem.before(element);
+        }
+        this.place = element.nextElementSibling;
+      } else {
+        pointItem.before(element);
+        this.place = element.previousElementSibling;
+      }
+    }
+  }
+
   static readFile(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
