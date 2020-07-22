@@ -4,7 +4,6 @@ export default class Utils {
   }
 
   static eventCoordinates(event) {
-    console.log(event.type);
     return (event.changedTouches) ? event.changedTouches[0] : event;
   }
 
@@ -35,10 +34,8 @@ export default class Utils {
         } else {
           pointItem.before(element);
         }
-        this.place = element.nextElementSibling;
       } else {
         pointItem.before(element);
-        this.place = element.previousElementSibling;
       }
     }
   }
@@ -46,7 +43,7 @@ export default class Utils {
   static readFile(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.addEventListener('load', (event) => resolve(event.target.result));
+      reader.addEventListener('load', (event) => resolve({ name: file.name, type: file.type, link: event.target.result }));
       reader.addEventListener('error', (event) => reject(event.target.error));
       reader.readAsDataURL(file);
     });

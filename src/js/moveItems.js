@@ -2,6 +2,7 @@
 /* eslint-disable import/no-cycle */
 import Storage from './storage';
 import App from './app';
+import Utils from './utils';
 
 // Всех, кто меньше, уменьшаем на единицу кроме тех, кто меньше изначального
 export default class MoveItems {
@@ -25,14 +26,14 @@ export default class MoveItems {
     return null;
   }
 
-  static dropItem(event, drag, place) {
+  static dropItem(event, drag) {
     if (drag) {
       // Новая колонка (если это именно она)
       const column = document
         .elementsFromPoint(event.clientX, event.clientY)
         .find((item) => item.classList.contains('column-container'));
       if (column) {
-        MoveItems.putItem(event, column, drag, place);
+        MoveItems.putItem(event, column, drag);
       } else {
         drag.style.transform = '';
         drag.classList.remove('drag');
@@ -41,9 +42,15 @@ export default class MoveItems {
     return null;
   }
 
-  static putItem(event, column, drag, pointItem) {
+  static putItem(event, column, drag) {
     // Фиксируем старую колонку, понадобится при перестроении колонок
     const oldColumn = drag.closest('.column-container').id;
+    const pointItem = document.elementsFromPoint(
+      Utils.eventCoordinates(event).clientX,
+      Utils.eventCoordinates(event).clientY,
+    ).find(
+      (item) => item.classList.contains('column-item') && !item.classList.contains('drag'),
+    );
     const dragId = drag.getAttribute('data-id');
     // Новая (возможно) колонка
     const targetColumn = document.elementsFromPoint(event.clientX, event.clientY)
@@ -95,11 +102,7 @@ export default class MoveItems {
       const targetItem = items.find((item) => item.id === dragId);
       // 2.1. Mouseup на пустом месте
       if (!pointItem) {
-        if (!items.find((item) => item.column === targetColumn)) {
-          endOrder = 1;
-        } else {
-          endOrder = items.filter((item) => item.column === targetColumn).length + 1;
-        }
+        endOrder = items.filter((item) => item.column === targetColumn).length + 1;
       //  2.2 Mouseup на одной из ячеек
       } else {
         endOrder = parseInt(pointItem.getAttribute('data-order'), 10);

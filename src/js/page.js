@@ -21,7 +21,6 @@ export default class Page {
     this.fileChooser = this.page.querySelector('input#file');
     this.column = 'todo';
     this.drag = null;
-    this.place = null;
     // "Дельта" - разница между курсором и левым верхним углом
     // перетаскиваемого элемента. Понадобится при Drag and Drop
     this.delta = { x: 0, y: 0 };
@@ -151,10 +150,8 @@ export default class Page {
     // Обработчик кнопки выбора файла
     this.fileChooser.addEventListener('change', (event) => {
       const newFiles = Array.from(event.target.files);
-      newFiles.forEach((file) => {
-        Modals.renderFiles(this.modalAddUpdate, file, this.fileTypes);
+      newFiles.forEach(() => {
       });
-      this.files = this.files.concat(newFiles);
     });
 
     // Обработчик кнопок удаления файлов
@@ -226,14 +223,14 @@ export default class Page {
       if (space) {
         space.remove();
       }
-      this.drag = MoveItems.dropItem(Utils.eventCoordinates(event), this.drag, this.place);
+      this.drag = MoveItems.dropItem(Utils.eventCoordinates(event), this.drag);
     });
     this.board.addEventListener('mouseup', (event) => {
       const space = this.board.querySelector('.column-space');
       if (space) {
         space.remove();
       }
-      this.drag = MoveItems.dropItem(Utils.eventCoordinates(event), this.drag, this.place);
+      this.drag = MoveItems.dropItem(Utils.eventCoordinates(event), this.drag);
     });
   }
 }
