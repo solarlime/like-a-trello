@@ -89,6 +89,7 @@ export default class Page {
       'application/zip',
     ];
     this.files = [];
+    this.filesToSave = [];
   }
 
   /**
@@ -150,7 +151,26 @@ export default class Page {
     // Обработчик кнопки выбора файла
     this.fileChooser.addEventListener('change', (event) => {
       const newFiles = Array.from(event.target.files);
-      newFiles.forEach(() => {
+      newFiles.forEach((file) => {
+        try {
+          // Тип файла не поддерживается - отмена
+          if (!this.fileTypes.find((fileType) => fileType === file.type)) {
+            throw new Error('This file type is not supported');
+          }
+          Utils.readFile(file)
+            .then((result) => {
+              console.log(result);
+              this.filesToSave.push(result);
+              Modals.renderFiles(this.modalAddUpdate, result);
+              console.log(this.filesToSave);
+            })
+            .catch((error) => {
+              console.log(error);
+              throw new Error('Cannot read the file');
+            });
+        } catch (error) {
+          alert(error);
+        }
       });
     });
 

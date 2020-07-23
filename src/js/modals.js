@@ -2,6 +2,7 @@
 import id from 'uniqid';
 import Storage from './storage';
 import App from './app';
+import Utils from './utils';
 
 export default class Modals {
   static show(modal, row, target) {
@@ -12,28 +13,58 @@ export default class Modals {
     if (row) {
       input.value = row.querySelector('.column-item-title').textContent;
     }
-    modal.classList.remove('hidden');
-    if (input) {
-      input.focus();
+    const items = Storage.getItems();
+    if (items && row) {
+      const filesToRender = items.find((item) => item.id === row.getAttribute('data-id')).files;
+      if (filesToRender && filesToRender.length) {
+        console.log(filesToRender);
+        filesToRender.forEach(
+          (file) => fetch(file.link)
+            .then((result) => result.arrayBuffer())
+            .then((result) => {
+              console.log(result);
+              return new File([result], file.name, { type: file.type });
+            })
+            .then((result) => Utils.readFile(result))
+            .then((result) => Modals.renderFiles(modal, result))
+            .then(() => {
+              modal.classList.remove('hidden');
+              if (input) {
+                input.focus();
+              }
+            }),
+        );
+        console.log(filesToRender);
+      } else {
+        modal.classList.remove('hidden');
+        if (input) {
+          input.focus();
+        }
+      }
     }
   }
 
-  static save(modal, button, column, row) {
+  static save(modal, button, column, row, filesToSave) {
+    // TODO: файлы затираются при редактировании
     const name = modal.querySelector('#description').value.trim();
     let data = Storage.getItems();
     if (row) {
       const target = data.find((item) => item.id.toString() === row.getAttribute('data-id'));
       target.name = name;
+      target.files = filesToSave;
+      console.log(filesToSave);
     } else {
       if (!data) {
         data = [];
       }
+      const order = () => (Storage.getItems() ? Storage.getItems()
+        .filter((item) => item.column === column).length + 1 : 1);
       data.push({
         id: id(),
-        order: () => (Storage.getItems() ? Storage.getItems()
-          .filter((item) => item.column === column).length + 1 : 1),
+        order: order(),
         column,
         name,
+        files: filesToSave,
       });
     }
     Storage.setItems(data);
@@ -42,10 +73,15 @@ export default class Modals {
   }
 
   static delete(row) {
-    Storage.setItems(
-      // помещаем обратно в localStorage ту его часть, которая не совпадает по id с data-id
-      Storage.getItems().filter((item) => item.id.toString() !== row.getAttribute('data-id')),
-    );
+    const data = () => Storage.getItems().filter((item) => item.id.toString() !== row.getAttribute('data-id'))
+      .map((item) => {
+        if (item.column === row.closest('.column-container').id && parseInt(item.order, 10) > parseInt(row.getAttribute('data-order'), 10)) {
+          // eslint-disable-next-line no-param-reassign
+          item.order = parseInt(item.order, 10) - 1;
+        }
+        return item;
+      });
+    Storage.setItems(data());
     App.update();
     Modals.cancel();
   }
@@ -58,16 +94,12 @@ export default class Modals {
   }
 
   // eslint-disable-next-line consistent-return
-  static renderFiles(modal, file, fileTypes) {
+  static renderFiles(modal, file) {
     // Передали не то окно - отмена
     if (!modal.classList.contains('modal-add-update')) {
       return null;
     }
-    // Тип файла не поддерживается - отмена
-    if (!fileTypes.find((fileType) => fileType === file.type)) {
-      alert('This file type is not supported');
-      return null;
-    }
+    console.log(file);
     const fileElement = document.createElement('li');
     fileElement.classList.add('file-element');
     fileElement.setAttribute('data-time', `${file.lastModified}`);
@@ -80,7 +112,7 @@ export default class Modals {
       + '44 15.082031-6.25l128.210937-128.214844 128.214844 128.214844c4.160156 4.160156 9.621094 6.2'
       + '5 15.082032 6.25 5.460937 0 10.921874-2.089844 15.082031-6.25 8.34375-8.339844 8.34375-21.82'
       + '4219 0-30.164063zm0 0"/></svg>';
-    const link = URL.createObjectURL(file);
+    // const link = URL.createObjectURL(file);
     const fileType = Array.from(file.name)
       .slice(file.name.length - Array.from(file.name).reverse()
         .findIndex((item) => item === '.') - 1).join('');
@@ -93,7 +125,7 @@ export default class Modals {
     } else {
       // Если картинка
       previewItem = document.createElement('img');
-      previewItem.src = link;
+      previewItem.src = file.link;
       previewItem.alt = file.name;
       previewItem.classList.add('preview-image');
     }
@@ -101,10 +133,11 @@ export default class Modals {
     fileElement.appendChild(previewItem);
     fileElement.insertAdjacentHTML('beforeend', svg);
     modal.querySelector('.files').appendChild(fileElement);
-    setTimeout(() => URL.revokeObjectURL(link), 60000);
+    // setTimeout(() => URL.revokeObjectURL(link), 60000);
   }
 
   static reset() {
     document.forms['add-and-update'].reset();
+    Array.from(document.querySelector('.files').children).forEach((item) => item.remove());
   }
 }
