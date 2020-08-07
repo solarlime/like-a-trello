@@ -5,7 +5,7 @@ import App from './app';
 import Utils from './utils';
 
 export default class Modals {
-  static show(modal, row, target) {
+  static show(modal, row, target, filesToSave) {
     if (target && target.classList.contains('new')) {
       this.column = target.previousElementSibling.id;
     }
@@ -17,16 +17,15 @@ export default class Modals {
     if (items && row) {
       const filesToRender = items.find((item) => item.id === row.getAttribute('data-id')).files;
       if (filesToRender && filesToRender.length) {
-        console.log(filesToRender);
         filesToRender.forEach(
           (file) => fetch(file.link)
             .then((result) => result.arrayBuffer())
-            .then((result) => {
-              console.log(result);
-              return new File([result], file.name, { type: file.type });
-            })
+            .then((result) => new File([result], file.name, { type: file.type }))
             .then((result) => Utils.readFile(result))
-            .then((result) => Modals.renderFiles(modal, result))
+            .then((result) => {
+              filesToSave.push(result);
+              Modals.renderFiles(modal, result);
+            })
             .then(() => {
               modal.classList.remove('hidden');
               if (input) {
@@ -34,14 +33,14 @@ export default class Modals {
               }
             }),
         );
-        console.log(filesToRender);
-      } else {
-        modal.classList.remove('hidden');
-        if (input) {
-          input.focus();
-        }
+        return filesToSave;
       }
     }
+    modal.classList.remove('hidden');
+    if (input) {
+      input.focus();
+    }
+    return [];
   }
 
   static save(modal, button, column, row, filesToSave) {
@@ -52,7 +51,6 @@ export default class Modals {
       const target = data.find((item) => item.id.toString() === row.getAttribute('data-id'));
       target.name = name;
       target.files = filesToSave;
-      console.log(filesToSave);
     } else {
       if (!data) {
         data = [];
@@ -69,7 +67,7 @@ export default class Modals {
     }
     Storage.setItems(data);
     App.update();
-    Modals.cancel();
+    return Modals.cancel();
   }
 
   static delete(row) {
@@ -83,7 +81,6 @@ export default class Modals {
       });
     Storage.setItems(data());
     App.update();
-    Modals.cancel();
   }
 
   static cancel() {
@@ -91,6 +88,7 @@ export default class Modals {
     document.querySelector('button.save').disabled = true;
     document.querySelectorAll('.error').forEach((message) => message.classList.add('hidden'));
     Array.from(document.querySelectorAll('.modal-container')).find((modal) => !modal.classList.contains('hidden')).classList.add('hidden');
+    return [];
   }
 
   // eslint-disable-next-line consistent-return
@@ -99,7 +97,6 @@ export default class Modals {
     if (!modal.classList.contains('modal-add-update')) {
       return null;
     }
-    console.log(file);
     const fileElement = document.createElement('li');
     fileElement.classList.add('file-element');
     fileElement.setAttribute('data-time', `${file.lastModified}`);

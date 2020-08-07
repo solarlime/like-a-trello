@@ -43,7 +43,12 @@ export default class Utils {
   static readFile(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.addEventListener('load', (event) => resolve({ name: file.name, type: file.type, link: event.target.result }));
+      reader.addEventListener('load', (event) => resolve({
+        name: file.name,
+        type: file.type,
+        lastModified: file.lastModified,
+        link: event.target.result,
+      }));
       reader.addEventListener('error', (event) => reject(event.target.error));
       reader.readAsDataURL(file);
     });

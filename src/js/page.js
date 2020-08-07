@@ -104,11 +104,13 @@ export default class Page {
       if (svg.tagName !== 'svg') return null;
       if (svg.classList.value === 'column-item-actions-update') {
         this.targetRow = svg.closest('li');
-        Modals.show.call(this, this.modalAddUpdate, this.targetRow);
+        this.filesToSave = Modals.show.call(
+          this, this.modalAddUpdate, this.targetRow, event.target, this.filesToSave,
+        );
       }
       if (svg.classList.value === 'column-item-actions-delete') {
         this.targetRow = svg.closest('li');
-        Modals.show(this.modalDelete);
+        this.filesToSave = Modals.show(this.modalDelete);
       }
       return 1;
     }
@@ -117,18 +119,22 @@ export default class Page {
     this.pluses.forEach((plus) => {
       plus.addEventListener('touchend', (event) => {
         this.targetRow = 0;
-        Modals.show.call(this, this.modalAddUpdate, this.targetRow, event.target);
+        this.filesToSave = Modals.show.call(
+          this, this.modalAddUpdate, this.targetRow, event.target, this.filesToSave,
+        );
       });
       plus.addEventListener('click', (event) => {
         this.targetRow = 0;
-        Modals.show.call(this, this.modalAddUpdate, this.targetRow, event.target);
+        this.filesToSave = Modals.show.call(
+          this, this.modalAddUpdate, this.targetRow, event.target, this.filesToSave,
+        );
       });
     });
 
     // Обработчики для кнопок Cancel
     this.cancels.forEach((cancel) => {
-      cancel.addEventListener('touchend', () => Modals.cancel.call(this));
-      cancel.addEventListener('click', () => Modals.cancel.call(this));
+      cancel.addEventListener('touchend', () => { this.filesToSave = Modals.cancel(); });
+      cancel.addEventListener('click', () => { this.filesToSave = Modals.cancel(); });
     });
 
     // Обработчики для кнопок 'Edit' и 'Remove'
@@ -141,8 +147,16 @@ export default class Page {
     });
 
     // Обработчики кнопки 'Save'
-    this.save.addEventListener('touchend', (event) => Modals.save(this.modalAddUpdate, event.target, this.column, this.targetRow, this.filesToSave));
-    this.save.addEventListener('click', (event) => Modals.save(this.modalAddUpdate, event.target, this.column, this.targetRow, this.filesToSave));
+    this.save.addEventListener('touchend', (event) => {
+      this.filesToSave = Modals.save(
+        this.modalAddUpdate, event.target, this.column, this.targetRow, this.filesToSave,
+      );
+    });
+    this.save.addEventListener('click', (event) => {
+      this.filesToSave = Modals.save(
+        this.modalAddUpdate, event.target, this.column, this.targetRow, this.filesToSave,
+      );
+    });
 
     // Обработчики кнопки 'Delete'
     this.delete.addEventListener('touchend', () => Modals.delete(this.targetRow));
@@ -159,10 +173,9 @@ export default class Page {
           }
           Utils.readFile(file)
             .then((result) => {
-              console.log(result);
               this.filesToSave.push(result);
               Modals.renderFiles(this.modalAddUpdate, result);
-              console.log(this.filesToSave);
+              this.save.disabled = false;
             })
             .catch((error) => {
               console.log(error);
@@ -177,12 +190,12 @@ export default class Page {
     // Обработчик кнопок удаления файлов
     this.modalAddUpdate.addEventListener('click', (event) => {
       const svg = Utils.getSVG(event.target);
-      if (svg.tagName !== 'svg') return null;
-      this.files.splice(this.files
-        .findIndex((item) => item.lastModified === svg.closest('li')
+      if (svg.tagName !== 'svg') return;
+      this.filesToSave.splice(this.filesToSave
+        .findIndex((item) => item.lastModified.toString() === svg.closest('li')
           .getAttribute('data-time')), 1);
       svg.closest('li').remove();
-      return 1;
+      this.save.disabled = false;
     });
 
     // Обработчики захвата ячейки
