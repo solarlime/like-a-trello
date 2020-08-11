@@ -81,6 +81,7 @@ export default class Modals {
       });
     Storage.setItems(data());
     App.update();
+    Modals.cancel();
   }
 
   static cancel() {
