@@ -387,6 +387,10 @@ label {
     cursor: not-allowed;
 }
 
+.save:disabled:hover {
+    background-color: transparent;
+}
+
 .hidden {
     display: none;
 }
