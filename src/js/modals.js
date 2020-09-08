@@ -7,8 +7,9 @@ import Utils from './utils';
 export default class Modals {
   static show(modal, row, target, filesToSave) {
     if (target && target.closest('li.file-element')) {
-      const file = target.closest('li.file-element').querySelector('.preview, .preview-image').cloneNode(true);
-      modal.querySelector('.modal-file-container').insertAdjacentElement('afterbegin', file);
+      const fileNode = target.closest('li.file-element').querySelector('.preview, .preview-image').cloneNode(true);
+      fileNode.id = 'preview-for-download';
+      modal.querySelector('.modal-file-container').insertAdjacentElement('afterbegin', fileNode);
     }
     if (target && target.classList.contains('new')) {
       this.column = target.previousElementSibling.id;
