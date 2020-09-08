@@ -1,12 +1,15 @@
 export default class Utils {
+  // Функция, однозначно возвращающая svg-элемент
   static getSVG(target) {
     return (!target.ownerSVGElement) ? target : target.ownerSVGElement;
   }
 
+  // Функция, обобщающая работу с координатами
   static eventResolver(event) {
     return (event.changedTouches) ? event.changedTouches[0] : event;
   }
 
+  // Функция отрисовки пробелов между пунктами
   static renderSpace(event, drag, theSameItem = 0) {
     const pointItem = document.elementsFromPoint(event.clientX, event.clientY)
       .find((item) => item.classList.contains('column-item')
@@ -16,17 +19,21 @@ export default class Utils {
     const space = document.querySelector('.column-space');
     const spaceToRemove = drag.closest('.column-container')
       ? drag.closest('.column-container').querySelector('.column-space') : null;
+    // Если уже есть пробел - убираем
     if (pointColumn && spaceToRemove
       && pointColumn.id !== drag.closest('.column-container').id) {
       spaceToRemove.remove();
     }
+    // Работаем только при наведении на пункт
     if (pointItem) {
       const element = document.createElement('div');
       element.textContent = 'Put the item here';
       element.classList.add('column-space');
+      // Убираем старый пробел
       if (space) {
         space.remove();
       }
+      // При работе с одним и тем же элементом ориентируемся по позиции
       if (!theSameItem) {
         if (event.pageY
           > window.scrollY + pointItem.getBoundingClientRect().top + pointItem.offsetHeight / 2) {
@@ -40,12 +47,14 @@ export default class Utils {
     }
   }
 
+  // Функция создания файла из файлового объекта
   static makeFile(fileObject) {
     return fetch(fileObject.link)
       .then((result) => result.arrayBuffer())
       .then((result) => new File([result], fileObject.name, { type: fileObject.type }));
   }
 
+  // Функция создания файлового объекта из файла
   static readFile(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -60,6 +69,7 @@ export default class Utils {
     });
   }
 
+  // Функция отрисовки файлов
   // eslint-disable-next-line consistent-return
   static renderFiles(modal, file) {
     // Передали не то окно - отмена
@@ -104,6 +114,7 @@ export default class Utils {
     }
   }
 
+  // Функция отрисовки пунктов
   static render(item) {
     const newRow = document.createElement('li');
     newRow.setAttribute('class', 'column-item');
@@ -128,6 +139,7 @@ export default class Utils {
       + '                                    <path d="m209.253906 465.976562c8.285156 0 15-6.714843 15-15v-270.398437c0-8.285156-6.714844-15-15-15s-15 6.714844-15 15v270.398437c0 8.285157 6.714844 15 15 15zm0 0"></path>\n'
       + '                            </div>\n'
       + '                          </div>';
+    // Требуется учесть наличие файлов
     if (item.files.length) {
       const filesContainer = document.createElement('div');
       filesContainer.setAttribute('class', 'column-item-files');
