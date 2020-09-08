@@ -1,8 +1,9 @@
-/* eslint-disable import/no-cycle */
+/* eslint-disable import/no-cycle,no-unused-expressions */
 import Modals from './modals';
 import validation from './validation';
 import MoveItems from './moveItems';
 import Utils from './utils';
+import Storage from './storage';
 
 export default class Page {
   constructor() {
@@ -14,70 +15,18 @@ export default class Page {
     this.scrollRight = this.page.querySelector('.scroll-right');
     this.modalAddUpdate = this.page.querySelector('.modal-add-update');
     this.modalDelete = this.page.querySelector('.modal-delete');
+    this.modalFile = this.page.querySelector('.modal-file');
     this.form = this.page.querySelector('form#add-and-update');
     this.cancels = this.page.querySelectorAll('button.cancel');
     this.save = this.page.querySelector('button.save');
     this.delete = this.page.querySelector('button.delete');
+    this.download = this.page.querySelector('button.download');
     this.fileChooser = this.page.querySelector('input#file');
     this.column = 'todo';
     this.drag = null;
     // "Дельта" - разница между курсором и левым верхним углом
     // перетаскиваемого элемента. Понадобится при Drag and Drop
     this.delta = { x: 0, y: 0 };
-    // Example of the data
-    // const example = {
-    //   items: [
-    //     {
-    //       id: '11',
-    //       order: '2',
-    //       column: 'todo',
-    //       name: 'Second',
-    //     },
-    //     {
-    //       id: '12',
-    //       order: '1',
-    //       column: 'todo',
-    //       name: 'First',
-    //     },
-    //     {
-    //       id: '13',
-    //       order: '4',
-    //       column: 'doing',
-    //       name: 'Sit',
-    //     },
-    //     {
-    //       id: '14',
-    //       order: '3',
-    //       column: 'doing',
-    //       name: 'Sing',
-    //     },
-    //     {
-    //       id: '21',
-    //       order: '2',
-    //       column: 'doing',
-    //       name: 'Knit',
-    //     },
-    //     {
-    //       id: '22',
-    //       order: '1',
-    //       column: 'doing',
-    //       name: 'Ring',
-    //     },
-    //     {
-    //       id: '31',
-    //       order: '2',
-    //       column: 'done',
-    //       name: 'Go to street',
-    //     },
-    //     {
-    //       id: '32',
-    //       order: '1',
-    //       column: 'done',
-    //       name: 'Make something',
-    //     },
-    //   ],
-    // };
-    // localStorage.setItem('items', JSON.stringify(example.items));
     this.save.disabled = true;
     this.fileTypes = [
       'text/plain',
@@ -117,12 +66,12 @@ export default class Page {
 
     // Обработчики для кнопок 'Add new item'
     this.pluses.forEach((plus) => {
-      plus.addEventListener('touchend', (event) => {
-        this.targetRow = 0;
-        this.filesToSave = Modals.show.call(
-          this, this.modalAddUpdate, this.targetRow, event.target, this.filesToSave,
-        );
-      });
+    //   plus.addEventListener('touchend', (event) => {
+    //     this.targetRow = 0;
+    //     this.filesToSave = Modals.show.call(
+    //       this, this.modalAddUpdate, this.targetRow, event.target, this.filesToSave,
+    //     );
+    //   });
       plus.addEventListener('click', (event) => {
         this.targetRow = 0;
         this.filesToSave = Modals.show.call(
@@ -131,15 +80,41 @@ export default class Page {
       });
     });
 
+    // Обработчик нажатий на файлы
+    // this.board.addEventListener('touchend', (event) => {
+    //   event.preventDefault();
+    //   if (Utils.eventResolver(event).target.closest('.file-element')) {
+    //     Modals.show(this.modalFile, 0, event.target);
+    //   }
+    // });
+    this.board.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (Utils.eventResolver(event).target.closest('.file-element')) {
+        Modals.show(this.modalFile, 0, event.target);
+      }
+    });
+
     // Обработчики для кнопок Cancel
     this.cancels.forEach((cancel) => {
-      cancel.addEventListener('touchend', () => { this.filesToSave = Modals.cancel(); });
-      cancel.addEventListener('click', () => { this.filesToSave = Modals.cancel(); });
+      // cancel.addEventListener('touchend', (event) => {
+      //   event.preventDefault();
+      //   this.filesToSave = Modals.cancel();
+      // });
+      cancel.addEventListener('click', (event) => {
+        event.preventDefault();
+        this.filesToSave = Modals.cancel();
+      });
     });
 
     // Обработчики для кнопок 'Edit' и 'Remove'
-    this.board.addEventListener('click', (event) => actionsButtons.call(this, event));
-    this.board.addEventListener('touchend', (event) => actionsButtons.call(this, event));
+    this.board.addEventListener('click', (event) => {
+      event.preventDefault();
+      actionsButtons.call(this, event);
+    });
+    // this.board.addEventListener('touchend', (event) => {
+    //   event.preventDefault();
+    //   actionsButtons.call(this, event);
+    // });
 
     // Обработчик проверки поля ввода на валидность
     this.form.querySelector('#description').addEventListener('input', (event) => {
@@ -147,20 +122,50 @@ export default class Page {
     });
 
     // Обработчики кнопки 'Save'
-    this.save.addEventListener('touchend', (event) => {
-      this.filesToSave = Modals.save(
-        this.modalAddUpdate, event.target, this.column, this.targetRow, this.filesToSave,
-      );
-    });
+    // this.save.addEventListener('touchend', (event) => {
+    //   event.preventDefault();
+    //   this.filesToSave = Modals.save(
+    //     this.modalAddUpdate, event.target, this.column, this.targetRow, this.filesToSave,
+    //   );
+    // });
     this.save.addEventListener('click', (event) => {
+      event.preventDefault();
       this.filesToSave = Modals.save(
         this.modalAddUpdate, event.target, this.column, this.targetRow, this.filesToSave,
       );
     });
 
+    // Обработчики кнопки 'Download'
+    this.download.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.download.textContent = 'Wait...';
+      this.download.style.disabled = 'true';
+      event.target.blur();
+      const items = Storage.getItems();
+      const files = items.flatMap((item) => item.files);
+      const previewForDownload = this.page.querySelector('#preview-for-download');
+      const fileItem = files.find((file) => file.name === previewForDownload.title);
+      const url = document.createElement('a');
+      url.download = fileItem.name;
+      url.href = fileItem.link;
+      url.rel = 'noopener';
+      setTimeout(() => {
+        url.dispatchEvent(new MouseEvent('click'));
+        Modals.cancel();
+        this.download.textContent = 'Download';
+        this.download.style.disabled = 'false';
+      }, 1000);
+    });
+
     // Обработчики кнопки 'Delete'
-    this.delete.addEventListener('touchend', () => Modals.delete(this.targetRow));
-    this.delete.addEventListener('click', () => Modals.delete(this.targetRow));
+    // this.delete.addEventListener('touchend', (event) => {
+    //   event.preventDefault();
+    //   Modals.delete(this.targetRow);
+    // });
+    this.delete.addEventListener('click', (event) => {
+      event.preventDefault();
+      Modals.delete(this.targetRow);
+    });
 
     // Обработчик кнопки выбора файла
     this.fileChooser.addEventListener('change', (event) => {
@@ -174,7 +179,7 @@ export default class Page {
           Utils.readFile(file)
             .then((result) => {
               this.filesToSave.push(result);
-              Modals.renderFiles(this.modalAddUpdate, result);
+              Utils.renderFiles(this.modalAddUpdate, result);
               this.save.disabled = false;
             })
             .catch((error) => {
@@ -205,18 +210,20 @@ export default class Page {
         // Начальная точка скроллинга
         this.start = event.changedTouches[0].clientX + this.main.scrollLeft;
       } else {
-        Utils.renderSpace.call(this, Utils.eventCoordinates(event), this.drag, 'down');
+        Utils.renderSpace.call(this, Utils.eventResolver(event), this.drag, 1);
       }
     });
     this.board.addEventListener('mousedown', (event) => {
       this.drag = MoveItems.chooseItem(event, this.delta);
       if (this.drag) {
-        Utils.renderSpace.call(this, Utils.eventCoordinates(event), this.drag, 'down');
+        Utils.renderSpace.call(this, Utils.eventResolver(event), this.drag, 1);
       }
     });
 
-    this.scrollLeft.addEventListener('mousemove', () => this.main.scrollBy({ left: -100, behavior: 'smooth' }));
-    this.scrollRight.addEventListener('mousemove', () => this.main.scrollBy({ left: 100, behavior: 'smooth' }));
+    // this.scrollLeft.addEventListener('mousemove', () => this.main
+    //   .scrollBy({ left: -100, behavior: 'smooth' }));
+    // this.scrollRight.addEventListener('mousemove', () => this.main
+    //   .scrollBy({ left: 100, behavior: 'smooth' }));
 
     // Обработчики перемещения ячейки
     this.board.addEventListener('touchmove', (event) => {
@@ -225,20 +232,14 @@ export default class Page {
         this.end = event.changedTouches[0].clientX;
         this.main.scrollLeft = this.start - this.end;
       } else {
-        if (document
-          .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
-          .find((item) => item === this.scrollLeft)) {
-          this.main.scrollBy({ left: -100, behavior: 'smooth' });
-        }
-        if (document
-          .elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
-          .find((item) => item === this.scrollRight)) {
-          this.main.scrollBy({ left: 100, behavior: 'smooth' });
-        }
+        document.elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
+          .find((item) => item.classList.contains('column-container'))?.scrollIntoView({ inline: 'center', behavior: 'smooth' });
+        document.elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
+          .find((item) => item.classList.contains('file-element'))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         this.drag.style.transform = 'rotate(2deg)';
         this.drag.style.left = `${event.changedTouches[0].clientX - this.delta.x}px`;
         this.drag.style.top = `${event.changedTouches[0].clientY - this.delta.y}px`;
-        Utils.renderSpace.call(this, Utils.eventCoordinates(event), this.drag);
+        Utils.renderSpace.call(this, Utils.eventResolver(event), this.drag);
       }
     });
     this.board.addEventListener('mousemove', (event) => {
@@ -246,24 +247,16 @@ export default class Page {
         this.drag.style.transform = 'rotate(2deg)';
         this.drag.style.left = `${event.clientX - this.delta.x}px`;
         this.drag.style.top = `${event.clientY - this.delta.y}px`;
-        Utils.renderSpace.call(this, Utils.eventCoordinates(event), this.drag);
+        Utils.renderSpace.call(this, Utils.eventResolver(event), this.drag);
       }
     });
 
     // Обработчики 'бросания' ячейки
     this.board.addEventListener('touchend', (event) => {
-      const space = this.board.querySelector('.column-space');
-      if (space) {
-        space.remove();
-      }
-      this.drag = MoveItems.dropItem(Utils.eventCoordinates(event), this.drag);
+      this.drag = MoveItems.dropItem(Utils.eventResolver(event), this.drag);
     });
     this.board.addEventListener('mouseup', (event) => {
-      const space = this.board.querySelector('.column-space');
-      if (space) {
-        space.remove();
-      }
-      this.drag = MoveItems.dropItem(Utils.eventCoordinates(event), this.drag);
+      this.drag = MoveItems.dropItem(Utils.eventResolver(event), this.drag);
     });
   }
 }
