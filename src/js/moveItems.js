@@ -26,14 +26,14 @@ export default class MoveItems {
     return null;
   }
 
-  static dropItem(event, drag, space) {
+  static dropItem(event, drag) {
     if (drag) {
       // Новая колонка (если это именно она)
       const column = document
         .elementsFromPoint(event.clientX, event.clientY)
         .find((item) => item.classList.contains('column-container'));
       if (column) {
-        MoveItems.putItem(event, column, drag, space);
+        MoveItems.putItem(event, column, drag);
       } else {
         drag.style.transform = '';
         drag.classList.remove('drag');
