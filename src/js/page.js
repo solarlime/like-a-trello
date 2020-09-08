@@ -66,12 +66,12 @@ export default class Page {
 
     // Обработчики для кнопок 'Add new item'
     this.pluses.forEach((plus) => {
-    //   plus.addEventListener('touchend', (event) => {
-    //     this.targetRow = 0;
-    //     this.filesToSave = Modals.show.call(
-    //       this, this.modalAddUpdate, this.targetRow, event.target, this.filesToSave,
-    //     );
-    //   });
+      plus.addEventListener('touchend', (event) => {
+        this.targetRow = 0;
+        this.filesToSave = Modals.show.call(
+          this, this.modalAddUpdate, this.targetRow, event.target, this.filesToSave,
+        );
+      });
       plus.addEventListener('click', (event) => {
         this.targetRow = 0;
         this.filesToSave = Modals.show.call(
@@ -81,12 +81,12 @@ export default class Page {
     });
 
     // Обработчик нажатий на файлы
-    // this.board.addEventListener('touchend', (event) => {
-    //   event.preventDefault();
-    //   if (Utils.eventResolver(event).target.closest('.file-element')) {
-    //     Modals.show(this.modalFile, 0, event.target);
-    //   }
-    // });
+    this.board.addEventListener('touchend', (event) => {
+      event.preventDefault();
+      if (Utils.eventResolver(event).target.closest('.file-element')) {
+        Modals.show(this.modalFile, 0, event.target);
+      }
+    });
     this.board.addEventListener('click', (event) => {
       event.preventDefault();
       if (Utils.eventResolver(event).target.closest('.file-element')) {
@@ -96,10 +96,10 @@ export default class Page {
 
     // Обработчики для кнопок Cancel
     this.cancels.forEach((cancel) => {
-      // cancel.addEventListener('touchend', (event) => {
-      //   event.preventDefault();
-      //   this.filesToSave = Modals.cancel();
-      // });
+      cancel.addEventListener('touchend', (event) => {
+        event.preventDefault();
+        this.filesToSave = Modals.cancel();
+      });
       cancel.addEventListener('click', (event) => {
         event.preventDefault();
         this.filesToSave = Modals.cancel();
@@ -111,10 +111,10 @@ export default class Page {
       event.preventDefault();
       actionsButtons.call(this, event);
     });
-    // this.board.addEventListener('touchend', (event) => {
-    //   event.preventDefault();
-    //   actionsButtons.call(this, event);
-    // });
+    this.board.addEventListener('touchend', (event) => {
+      event.preventDefault();
+      actionsButtons.call(this, event);
+    });
 
     // Обработчик проверки поля ввода на валидность
     this.form.querySelector('#description').addEventListener('input', (event) => {
@@ -122,12 +122,12 @@ export default class Page {
     });
 
     // Обработчики кнопки 'Save'
-    // this.save.addEventListener('touchend', (event) => {
-    //   event.preventDefault();
-    //   this.filesToSave = Modals.save(
-    //     this.modalAddUpdate, event.target, this.column, this.targetRow, this.filesToSave,
-    //   );
-    // });
+    this.save.addEventListener('touchend', (event) => {
+      event.preventDefault();
+      this.filesToSave = Modals.save(
+        this.modalAddUpdate, event.target, this.column, this.targetRow, this.filesToSave,
+      );
+    });
     this.save.addEventListener('click', (event) => {
       event.preventDefault();
       this.filesToSave = Modals.save(
@@ -158,10 +158,10 @@ export default class Page {
     });
 
     // Обработчики кнопки 'Delete'
-    // this.delete.addEventListener('touchend', (event) => {
-    //   event.preventDefault();
-    //   Modals.delete(this.targetRow);
-    // });
+    this.delete.addEventListener('touchend', (event) => {
+      event.preventDefault();
+      Modals.delete(this.targetRow);
+    });
     this.delete.addEventListener('click', (event) => {
       event.preventDefault();
       Modals.delete(this.targetRow);
