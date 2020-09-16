@@ -81,11 +81,20 @@ export default class Page {
     });
 
     // Обработчик нажатий на файлы
-    this.board.addEventListener('touchend', (event) => {
+    this.board.addEventListener('touchstart', (event) => {
       event.preventDefault();
-      if (Utils.eventResolver(event).target.closest('.file-element')) {
-        Modals.show(this.modalFile, 0, event.target);
-      }
+      const eventResolvedStart = Utils.eventResolver(event);
+      const touchStartPoint = { x: eventResolvedStart.pageX, y: eventResolvedStart.pageY };
+      // eslint-disable-next-line no-shadow
+      this.board.addEventListener('touchend', (event) => {
+        event.preventDefault();
+        const eventResolvedEnd = Utils.eventResolver(event);
+        const touchEndPoint = { x: eventResolvedEnd.pageX, y: eventResolvedEnd.pageY };
+        if (Utils.eventResolver(event).target.closest('.file-element')
+          && (touchStartPoint.x === touchEndPoint.x) && (touchStartPoint.y === touchEndPoint.y)) {
+          Modals.show(this.modalFile, 0, event.target);
+        }
+      });
     });
     this.board.addEventListener('click', (event) => {
       event.preventDefault();
@@ -219,11 +228,6 @@ export default class Page {
         Utils.renderSpace.call(this, Utils.eventResolver(event), this.drag, 1);
       }
     });
-
-    // this.scrollLeft.addEventListener('mousemove', () => this.main
-    //   .scrollBy({ left: -100, behavior: 'smooth' }));
-    // this.scrollRight.addEventListener('mousemove', () => this.main
-    //   .scrollBy({ left: 100, behavior: 'smooth' }));
 
     // Обработчики перемещения ячейки
     this.board.addEventListener('touchmove', (event) => {
