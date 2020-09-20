@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return, no-param-reassign */
 export default class Utils {
   // Функция, однозначно возвращающая svg-элемент
   static getSVG(target) {
@@ -69,8 +70,39 @@ export default class Utils {
     });
   }
 
+  // Функция загрузки файлов
+  static fileUploader(newFiles, filesToSave, modal, button) {
+    return new Promise((resolve, reject) => {
+      const fileTypes = [
+        'text/plain',
+        'image/gif',
+        'image/jpeg',
+        'image/png',
+        'image/tiff',
+        'application/pdf',
+        'application/zip',
+      ];
+      const uploaded = newFiles.map((file) => {
+        if (!fileTypes.find((fileType) => fileType === file.type)) {
+          alert(new Error('This file type is not supported'));
+          return reject(new Error('This file type is not supported'));
+        }
+        return Utils.readFile(file)
+          .then((result) => {
+            filesToSave.push(result);
+            Utils.renderFiles(modal, result);
+            button.disabled = false;
+          })
+          .catch((error) => {
+            console.log(error);
+            throw new Error('Cannot read the file');
+          });
+      });
+      resolve(uploaded);
+    });
+  }
+
   // Функция отрисовки файлов
-  // eslint-disable-next-line consistent-return
   static renderFiles(modal, file) {
     // Передали не то окно - отмена
     if (!modal.classList.contains('modal-add-update') && !modal.classList.contains('column-item-files')) {
