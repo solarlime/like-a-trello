@@ -28,15 +28,6 @@ export default class Page {
     // перетаскиваемого элемента. Понадобится при Drag and Drop
     this.delta = { x: 0, y: 0 };
     this.save.disabled = true;
-    this.fileTypes = [
-      'text/plain',
-      'image/gif',
-      'image/jpeg',
-      'image/png',
-      'image/tiff',
-      'application/pdf',
-      'application/zip',
-    ];
     this.files = [];
     this.filesToSave = [];
   }
@@ -179,26 +170,24 @@ export default class Page {
     // Обработчик кнопки выбора файла
     this.fileChooser.addEventListener('change', (event) => {
       const newFiles = Array.from(event.target.files);
-      newFiles.forEach((file) => {
-        try {
-          // Тип файла не поддерживается - отмена
-          if (!this.fileTypes.find((fileType) => fileType === file.type)) {
-            throw new Error('This file type is not supported');
-          }
-          Utils.readFile(file)
-            .then((result) => {
-              this.filesToSave.push(result);
-              Utils.renderFiles(this.modalAddUpdate, result);
-              this.save.disabled = false;
-            })
-            .catch((error) => {
-              console.log(error);
-              throw new Error('Cannot read the file');
-            });
-        } catch (error) {
-          alert(error);
-        }
-      });
+      Utils.fileUploader(newFiles, this.filesToSave, this.modalAddUpdate, this.save);
+    });
+
+    function preventDefaults(event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    // Отменяем стандартное поведение браузера при нативном DnD. Спасибо @joezimjs
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
+      this.fileChooser.addEventListener(eventName, preventDefaults, false);
+      this.page.addEventListener(eventName, preventDefaults, false);
+    });
+
+    // Обработчик DnD файлов
+    document.querySelector('.fake-file').addEventListener('drop', (event) => {
+      const newFiles = Array.from(event.dataTransfer.files);
+      Utils.fileUploader(newFiles, this.filesToSave, this.modalAddUpdate, this.save);
     });
 
     // Обработчик кнопок удаления файлов
