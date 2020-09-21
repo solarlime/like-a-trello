@@ -316,6 +316,11 @@ label {
     cursor: pointer;
 }
 
+.fake-file-ondnd {
+    border-color: forestgreen;
+    box-shadow: 0 0 1px white;
+}
+
 .files {
     display: flex;
     flex-wrap: wrap;

@@ -22,6 +22,7 @@ export default class Page {
     this.delete = this.page.querySelector('button.delete');
     this.download = this.page.querySelector('button.download');
     this.fileChooser = this.page.querySelector('input#file');
+    this.fakeFile = this.page.querySelector('.fake-file');
     this.column = 'todo';
     this.drag = null;
     // "Дельта" - разница между курсором и левым верхним углом
@@ -184,8 +185,20 @@ export default class Page {
       this.page.addEventListener(eventName, preventDefaults, false);
     });
 
+    ['dragenter', 'dragover'].forEach((eventName) => {
+      this.fakeFile.addEventListener(eventName, () => {
+        this.fakeFile.classList.add('fake-file-ondnd');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach((eventName) => {
+      this.fakeFile.addEventListener(eventName, () => {
+        this.fakeFile.classList.remove('fake-file-ondnd');
+      });
+    });
+
     // Обработчик DnD файлов
-    document.querySelector('.fake-file').addEventListener('drop', (event) => {
+    this.fakeFile.addEventListener('drop', (event) => {
       const newFiles = Array.from(event.dataTransfer.files);
       Utils.fileUploader(newFiles, this.filesToSave, this.modalAddUpdate, this.save);
     });
