@@ -71,7 +71,7 @@ export default class Utils {
   }
 
   // Функция загрузки файлов
-  static fileUploader(newFiles, filesToSave, modal, button) {
+  static fileUploader(newFiles, filesToSave, modal) {
     return new Promise((resolve, reject) => {
       const fileTypes = [
         'text/plain',
@@ -82,7 +82,7 @@ export default class Utils {
         'application/pdf',
         'application/zip',
       ];
-      const uploaded = newFiles.map((file) => {
+      newFiles.forEach((file) => {
         if (!fileTypes.find((fileType) => fileType === file.type)) {
           alert(new Error('This file type is not supported'));
           return reject(new Error('This file type is not supported'));
@@ -91,14 +91,13 @@ export default class Utils {
           .then((result) => {
             filesToSave.push(result);
             Utils.renderFiles(modal, result);
-            button.disabled = false;
           })
           .catch((error) => {
             console.log(error);
             throw new Error('Cannot read the file');
           });
       });
-      resolve(uploaded);
+      resolve(filesToSave);
     });
   }
 

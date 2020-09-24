@@ -119,7 +119,7 @@ export default class Page {
 
     // Обработчик проверки поля ввода на валидность
     this.form.querySelector('#description').addEventListener('input', (event) => {
-      this.save.disabled = !validation(event.target, this.save);
+      this.save.disabled = !validation(event.target);
     });
 
     // Обработчики кнопки 'Save'
@@ -140,7 +140,7 @@ export default class Page {
     this.download.addEventListener('click', (event) => {
       event.preventDefault();
       this.download.textContent = 'Wait...';
-      this.download.style.disabled = 'true';
+      this.download.disabled = true;
       event.target.blur();
       const items = Storage.getItems();
       const files = items.flatMap((item) => item.files);
@@ -154,7 +154,7 @@ export default class Page {
         url.dispatchEvent(new MouseEvent('click'));
         Modals.cancel();
         this.download.textContent = 'Download';
-        this.download.style.disabled = 'false';
+        this.download.disabled = false;
       }, 1000);
     });
 
@@ -170,8 +170,11 @@ export default class Page {
 
     // Обработчик кнопки выбора файла
     this.fileChooser.addEventListener('change', (event) => {
-      const newFiles = Array.from(event.target.files);
-      Utils.fileUploader(newFiles, this.filesToSave, this.modalAddUpdate, this.save);
+      Utils.fileUploader(Array.from(event.target.files),
+        this.filesToSave, this.modalAddUpdate, this.save)
+        .then(() => {
+          this.save.disabled = !validation(event.target.closest('.modal').querySelector('#description'));
+        });
     });
 
     function preventDefaults(event) {
@@ -199,8 +202,11 @@ export default class Page {
 
     // Обработчик DnD файлов
     this.fakeFile.addEventListener('drop', (event) => {
-      const newFiles = Array.from(event.dataTransfer.files);
-      Utils.fileUploader(newFiles, this.filesToSave, this.modalAddUpdate, this.save);
+      Utils.fileUploader(Array.from(event.dataTransfer.files),
+        this.filesToSave, this.modalAddUpdate, this.save)
+        .then(() => {
+          this.save.disabled = !validation(event.target.closest('.modal').querySelector('#description'));
+        });
     });
 
     // Обработчик кнопок удаления файлов
@@ -210,8 +216,8 @@ export default class Page {
       this.filesToSave.splice(this.filesToSave
         .findIndex((item) => item.lastModified.toString() === svg.closest('li')
           .getAttribute('data-time')), 1);
+      this.save.disabled = !validation(event.target.closest('.modal').querySelector('#description'));
       svg.closest('li').remove();
-      this.save.disabled = false;
     });
 
     // Обработчики захвата ячейки
