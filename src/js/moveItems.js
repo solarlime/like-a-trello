@@ -63,28 +63,18 @@ export default class MoveItems {
     // Определяем элемент, на котором произошло событие mousedown / touchend
     // eslint-disable-next-line func-names
     const endItem = (function resolveItem() {
-      // Навели выше середины ячейки
-      if (pointItem
-        && pointItem.previousElementSibling
-        && pointItem.previousElementSibling.classList.contains('column-space')) {
-        return pointItem;
+      const item = (pointItem?.classList.contains('column-item')) ? pointItem : null;
+      if (item) {
+        const { top } = item.getBoundingClientRect();
+        if (event.pageY > window.scrollY + top + item.offsetHeight / 2) {
+          // Навели ниже середины ячейки
+          return item.nextElementSibling.nextElementSibling;
+        }
+        // Навели выше середины ячейки
+        return item;
       }
-      // Навели ниже середины ячейки
-      if (pointItem
-        && pointItem.nextElementSibling
-        && pointItem.nextElementSibling.classList.contains('column-space')
-        // Предусматриваем, что ячейка не должна быть последней
-        && pointItem.nextElementSibling.nextElementSibling) {
-        return pointItem.nextElementSibling.nextElementSibling;
-      }
-      // Навели на заполнитель
-      if (pointItem
-        && pointItem.classList.contains('column-space')
-        && pointItem.nextElementSibling) {
-        return pointItem.nextElementSibling;
-      }
-      // Если последняя ячейка или пустое место
-      return null;
+      // Навели на заполнитель или пустое место
+      return (pointItem?.nextElementSibling) ? pointItem.nextElementSibling : null;
     }());
 
     // Вариант 1. Колонка не меняется
@@ -93,7 +83,11 @@ export default class MoveItems {
       if (!endItem) {
         endOrder = items.filter((item) => item.column === targetColumn).length;
       } else {
-        endOrder = parseInt(endItem.getAttribute('data-order'), 10);
+        // Исправляем "перепрыгивание" при перетаскивании вниз
+        endOrder = (function fixJumping() {
+          const parsed = parseInt(endItem.getAttribute('data-order'), 10);
+          return (dragOrder > parsed) ? parsed : parsed - 1;
+        }());
       }
       items.find((item) => item.id === dragId).order = endOrder;
       // На основе dragOrder и endOrder меняем остальные номера
