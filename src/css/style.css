@@ -367,7 +367,7 @@ label {
 }
 
 .files .preview {
-    min-width: 60px;
+    min-width: 50px;
 }
 
 .file-element .preview-image {
@@ -399,7 +399,7 @@ label {
 }
 
 #file {
-    height: 50px;
+    height: 60px;
 }
 
 #description:focus {

@@ -90,6 +90,7 @@ export default class Modals {
 
   static cancel() {
     App.reset();
+    document.querySelector('#description').style.borderColor = '';
     document.querySelector('button.save').disabled = true;
     document.querySelectorAll('.error').forEach((message) => message.classList.add('hidden'));
     Array.from(document.querySelectorAll('.modal-container')).find((modal) => !modal.classList.contains('hidden')).classList.add('hidden');
