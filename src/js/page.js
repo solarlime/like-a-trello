@@ -4,6 +4,7 @@ import validation from './validation';
 import MoveItems from './moveItems';
 import Utils from './utils';
 import Storage from './storage';
+import App from './app';
 
 export default class Page {
   constructor() {
@@ -268,7 +269,20 @@ export default class Page {
       this.drag = MoveItems.dropItem(Utils.eventResolver(event), this.drag);
     });
     this.board.addEventListener('mouseup', (event) => {
-      this.drag = MoveItems.dropItem(Utils.eventResolver(event), this.drag);
+      if (this.drag) {
+        this.drag = MoveItems.dropItem(Utils.eventResolver(event), this.drag);
+      }
+    });
+
+    ['mouseleave', 'touchcancel'].forEach((eventName) => {
+      this.page.addEventListener(eventName, (event) => {
+        if (this.drag) {
+          this.drag = null;
+          const e = (event.type === 'mouseleave') ? new Event('mouseup') : new Event('touchend');
+          this.board.dispatchEvent(e);
+          App.update();
+        }
+      });
     });
   }
 }
