@@ -46,6 +46,9 @@ export default class Utils {
         pointItem.before(element);
       }
     }
+    if (!pointColumn && space) {
+      space.remove();
+    }
   }
 
   // Функция создания файла из файлового объекта
