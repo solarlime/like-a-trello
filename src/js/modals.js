@@ -5,7 +5,9 @@ import App from './app';
 import Utils from './utils';
 
 export default class Modals {
+  // Функция отображения модельного окна
   static show(modal, row, target, filesToSave) {
+    // Если в ячейке файл, помещаем копию контейнера в окно
     if (target && target.closest('li.file-element')) {
       const fileNode = target.closest('li.file-element').querySelector('.preview, .preview-image').cloneNode(true);
       fileNode.id = 'preview-for-download';
@@ -21,6 +23,7 @@ export default class Modals {
     const items = Storage.getItems();
     if (items && row) {
       const filesToRender = items.find((item) => item.id === row.getAttribute('data-id')).files;
+      // Отрисовываем файлы
       if (filesToRender && filesToRender.length) {
         filesToRender.forEach(
           (file) => Utils.makeFile(file)
@@ -48,6 +51,7 @@ export default class Modals {
     return [];
   }
 
+  // Функция сохранения: отправка данных в localStorage
   static save(modal, button, column, row, filesToSave) {
     const name = modal.querySelector('#description').value.trim();
     let data = Storage.getItems();
@@ -74,6 +78,7 @@ export default class Modals {
     return Modals.cancel();
   }
 
+  // Функция удаления ячейки
   static delete(row) {
     const data = () => Storage.getItems().filter((item) => item.id.toString() !== row.getAttribute('data-id'))
       .map((item) => {
@@ -88,6 +93,7 @@ export default class Modals {
     Modals.cancel();
   }
 
+  // Функция закрытия окна
   static cancel() {
     App.reset();
     document.querySelector('#description').style.borderColor = '';

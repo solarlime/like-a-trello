@@ -10,6 +10,7 @@ export default class App {
     page.addListeners();
   }
 
+  // Функция сброса
   static reset() {
     document.forms['add-and-update'].reset();
     Array.from(document.querySelector('.files').children).forEach((item) => item.remove());
@@ -24,6 +25,7 @@ export default class App {
     }
   }
 
+  // Функция обновления содержимого
   static update() {
     App.reset();
     document.querySelectorAll('li.column-item').forEach((item) => item.remove());

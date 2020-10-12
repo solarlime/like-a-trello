@@ -274,6 +274,7 @@ export default class Page {
       }
     });
 
+    // Обработчики "ухода" курсора
     ['mouseleave', 'touchcancel'].forEach((eventName) => {
       this.page.addEventListener(eventName, (event) => {
         if (this.drag) {

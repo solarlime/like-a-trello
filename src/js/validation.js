@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 export default function validation(input) {
+  // Функция проверки поля на валидность
   const message = input.nextElementSibling;
   if (!input.validity.valid || !input.value.trim()) {
     if (input.validity.valueMissing) {

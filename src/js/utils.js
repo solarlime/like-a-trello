@@ -46,6 +46,7 @@ export default class Utils {
         pointItem.before(element);
       }
     }
+    // Если ушли из колонки, убираем пробел
     if (!pointColumn && space) {
       space.remove();
     }
