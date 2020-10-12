@@ -21,8 +21,8 @@ describe('E2E', () => {
     });
     browser = await puppeteer.launch(
       {
-        headless: false,
-        slowMo: 100,
+        // headless: false,
+        // slowMo: 100,
         // devtools: true,
       },
     );
