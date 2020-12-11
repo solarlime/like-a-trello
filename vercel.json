@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/index.html"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/backend",
+      "destination": "/api/index"
+    }
+  ],
+  "github": {
+    "enabled": false
+  }
+}

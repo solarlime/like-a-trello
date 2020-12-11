@@ -108,3 +108,5 @@ dist
 # WebStorm files
 .idea
 
+# Vercel files
+.vercel
