@@ -1,10 +1,9 @@
-/* eslint-disable import/no-cycle,no-unused-expressions */
+/* eslint-disable import/no-cycle, no-unused-expressions, no-param-reassign */
 import Modals from './modals';
 import validation from './validation';
 import MoveItems from './moveItems';
 import Utils from './utils';
 import Storage from './storage';
-import App from './app';
 
 export default class Page {
   constructor() {
@@ -12,8 +11,6 @@ export default class Page {
     this.main = this.page.querySelector('main');
     this.board = this.page.querySelector('.board');
     this.pluses = this.page.querySelectorAll('.new');
-    this.scrollLeft = this.page.querySelector('.scroll-left');
-    this.scrollRight = this.page.querySelector('.scroll-right');
     this.modalAddUpdate = this.page.querySelector('.modal-add-update');
     this.modalDelete = this.page.querySelector('.modal-delete');
     this.modalError = this.page.querySelector('.modal-error');
@@ -26,6 +23,7 @@ export default class Page {
     this.download = this.page.querySelector('button.download');
     this.fileChooser = this.page.querySelector('input#file');
     this.fakeFile = this.page.querySelector('.fake-file');
+    this.scrolls = this.page.querySelectorAll('.scrolls');
     this.column = 'todo';
     this.drag = null;
     // "Дельта" - разница между курсором и левым верхним углом
@@ -34,6 +32,8 @@ export default class Page {
     this.save.disabled = true;
     this.files = [];
     this.filesToSave = [];
+    this.scroll = false;
+    this.quotaForFiles = 5000000; // <5 MB due to serverless limits.
   }
 
   /**
@@ -48,9 +48,8 @@ export default class Page {
       if (svg.tagName !== 'svg') return null;
       if (svg.classList.value === 'column-item-actions-update') {
         this.targetRow = svg.closest('li');
-        this.filesToSave = Modals.show.call(
-          this, this.modalAddUpdate, this.targetRow, event.target, this.filesToSave,
-        );
+        this.filesToSave = Modals.show(this.modalAddUpdate, this.targetRow,
+          event.target, this.list.data, this.filesToSave);
       }
       if (svg.classList.value === 'column-item-actions-delete') {
         this.targetRow = svg.closest('li');
@@ -71,63 +70,45 @@ export default class Page {
 
     // Обработчики для кнопок 'Add new item'
     this.pluses.forEach((plus) => {
-      plus.addEventListener('touchend', (event) => {
+      ['mouseup', 'touchend'].forEach((eventType) => plus.addEventListener(eventType, (event) => {
         this.targetRow = 0;
-        this.filesToSave = Modals.show.call(
-          this, this.modalAddUpdate, this.targetRow, event.target, this.filesToSave,
-        );
-      });
-      plus.addEventListener('click', (event) => {
-        this.targetRow = 0;
-        this.filesToSave = Modals.show.call(
-          this, this.modalAddUpdate, this.targetRow, event.target, this.filesToSave,
-        );
-      });
+        this.filesToSave = Modals.show.call(this,
+          this.modalAddUpdate, this.targetRow, event.target, this.list.data, this.filesToSave);
+      }));
     });
 
-    // Обработчик нажатий на файлы
-    this.board.addEventListener('touchstart', (event) => {
+    // Обработчики нажатий на файлы и управляющие кнопки
+    ['mousedown', 'touchstart'].forEach((eventType) => this.board.addEventListener(eventType, (event) => {
       event.preventDefault();
-      const eventResolvedStart = Utils.eventResolver(event);
-      const touchStartPoint = { x: eventResolvedStart.pageX, y: eventResolvedStart.pageY };
-      // eslint-disable-next-line no-shadow
-      this.board.addEventListener('touchend', (event) => {
-        event.preventDefault();
-        const eventResolvedEnd = Utils.eventResolver(event);
-        const touchEndPoint = { x: eventResolvedEnd.pageX, y: eventResolvedEnd.pageY };
-        if (Utils.eventResolver(event).target.closest('.file-element')
-          && (touchStartPoint.x === touchEndPoint.x) && (touchStartPoint.y === touchEndPoint.y)) {
-          Modals.show(this.modalFile, 0, event.target);
+      const eventResolved = Utils.eventResolver(event);
+      this.touchStartPoint = { x: eventResolved.pageX, y: eventResolved.pageY };
+      this.touch = true;
+    }));
+
+    ['mouseup', 'touchend'].forEach((eventType) => this.board.addEventListener(eventType, (event) => {
+      event.preventDefault();
+      if (this.touch) {
+        const eventResolved = Utils.eventResolver(event);
+        this.touchEndPoint = { x: eventResolved.pageX, y: eventResolved.pageY };
+        if ((this.touchStartPoint.x === this.touchEndPoint.x)
+          && (this.touchStartPoint.y === this.touchEndPoint.y)) {
+          if (event.target.closest('.file-element')) {
+            Modals.show(this.modalFile, 0, event.target);
+          }
+          if (event.target.closest('.column-item-actions')) {
+            actionsButtons.call(this, event);
+          }
         }
-      });
-    });
-    this.board.addEventListener('click', (event) => {
-      event.preventDefault();
-      if (Utils.eventResolver(event).target.closest('.file-element')) {
-        Modals.show(this.modalFile, 0, event.target);
       }
-    });
+      this.touch = false;
+    }));
 
     // Обработчики для кнопок Cancel
     this.cancels.forEach((cancel) => {
-      cancel.addEventListener('touchend', (event) => {
+      ['mouseup', 'touchend'].forEach((eventType) => cancel.addEventListener(eventType, (event) => {
         event.preventDefault();
         this.filesToSave = Modals.cancel();
-      });
-      cancel.addEventListener('click', (event) => {
-        event.preventDefault();
-        this.filesToSave = Modals.cancel();
-      });
-    });
-
-    // Обработчики для кнопок 'Edit' и 'Remove'
-    this.board.addEventListener('click', (event) => {
-      event.preventDefault();
-      actionsButtons.call(this, event);
-    });
-    this.board.addEventListener('touchend', (event) => {
-      event.preventDefault();
-      actionsButtons.call(this, event);
+      }));
     });
 
     // Обработчик проверки поля ввода на валидность
@@ -136,27 +117,35 @@ export default class Page {
     });
 
     // Обработчики кнопки 'Save'
-    this.save.addEventListener('touchend', (event) => {
+    ['mouseup', 'touchend'].forEach((eventType) => this.save.addEventListener(eventType, async (event) => {
       event.preventDefault();
-      this.filesToSave = Modals.save(
-        this.modalAddUpdate, event.target, this.column, this.targetRow, this.filesToSave,
+      this.dancer.classList.remove('hidden');
+      const awaiter = await Modals.save(
+        this.modalAddUpdate, event.target, this.column, this.targetRow ? this.targetRow.getAttribute('data-id') : 0, this.filesToSave, this.list.data, this.quotaForFiles,
       );
-    });
-    this.save.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.filesToSave = Modals.save(
-        this.modalAddUpdate, event.target, this.column, this.targetRow, this.filesToSave,
-      );
-    });
+      if (awaiter.error) {
+        this.dancer.classList.add('hidden');
+        Modals.cancel();
+        this.modalError.querySelector('#error-message').textContent = awaiter.error.message;
+        Modals.show(this.modalError);
+        const timeout = setTimeout(async () => {
+          Modals.cancel();
+          await this.update(true);
+          clearTimeout(timeout);
+        }, 5000);
+      } else {
+        this.filesToSave = awaiter;
+        await this.update();
+      }
+    }));
 
     // Обработчики кнопки 'Download'
-    this.download.addEventListener('click', (event) => {
+    ['mouseup', 'touchend'].forEach((eventType) => this.download.addEventListener(eventType, (event) => {
       event.preventDefault();
       this.download.textContent = 'Wait...';
       this.download.disabled = true;
       event.target.blur();
-      const items = Storage.getItems();
-      const files = items.flatMap((item) => item.files);
+      const files = this.list.data.flatMap((item) => item.files);
       const previewForDownload = this.page.querySelector('#preview-for-download');
       const fileItem = files.find((file) => file.name === previewForDownload.title);
       const url = document.createElement('a');
@@ -169,17 +158,15 @@ export default class Page {
         this.download.textContent = 'Download';
         this.download.disabled = false;
       }, 1000);
-    });
+    }));
 
     // Обработчики кнопки 'Delete'
-    this.delete.addEventListener('touchend', (event) => {
+    ['mouseup', 'touchend'].forEach((eventType) => this.delete.addEventListener(eventType, async (event) => {
       event.preventDefault();
-      Modals.delete(this.targetRow);
-    });
-    this.delete.addEventListener('click', (event) => {
-      event.preventDefault();
-      Modals.delete(this.targetRow);
-    });
+      this.dancer.classList.remove('hidden');
+      await Modals.delete(this.targetRow.getAttribute('data-id'), this.list.data);
+      await this.update();
+    }));
 
     // Обработчик кнопки выбора файла
     this.fileChooser.addEventListener('change', (event) => {
@@ -222,8 +209,8 @@ export default class Page {
         });
     });
 
-    // Обработчик кнопок удаления файлов
-    this.modalAddUpdate.addEventListener('click', (event) => {
+    // Обработчики кнопок удаления файлов
+    ['mouseup', 'touchend'].forEach((eventType) => this.modalAddUpdate.addEventListener(eventType, (event) => {
       const svg = Utils.getSVG(event.target);
       if (svg.tagName !== 'svg') return;
       this.filesToSave.splice(this.filesToSave
@@ -231,69 +218,114 @@ export default class Page {
           .getAttribute('data-time')), 1);
       this.save.disabled = !validation(event.target.closest('.modal').querySelector('#description'));
       svg.closest('li').remove();
-    });
+    }));
 
     // Обработчики захвата ячейки
-    this.board.addEventListener('touchstart', (event) => {
-      this.drag = MoveItems.chooseItem(event, this.delta);
+    ['mousedown', 'touchstart'].forEach((eventType) => this.board.addEventListener(eventType, (event) => {
+      const eventResolved = Utils.eventResolver(event);
+      this.startTouchingTitle = { x: eventResolved.clientX, y: eventResolved.clientY };
+      this.endTouchingTitle = { ...this.startTouchingTitle };
+      this.drag = null;
+      if (event.target.classList.contains('column-item-title')) {
+        this.timeout = setTimeout(() => {
+          if (this.endTouchingTitle
+            // Палец может немного дёрнуться: проявляется в мобильных chrome-браузерах. Чиним
+            && (Math.abs(this.startTouchingTitle.x - this.endTouchingTitle.x) < 5)
+            && (Math.abs(this.startTouchingTitle.y - this.endTouchingTitle.y) < 5)) {
+            this.drag = MoveItems.chooseItem(event, this.delta);
+            Utils.renderSpace.call(this, eventResolved, this.drag, 1);
+          } else {
+            this.endTouchingTitle = undefined;
+          }
+          clearTimeout(this.timeout);
+        }, 1000);
+      }
       if (!this.drag) {
         // Начальная точка скроллинга
-        this.start = event.changedTouches[0].clientX + this.main.scrollLeft;
-      } else {
-        Utils.renderSpace.call(this, Utils.eventResolver(event), this.drag, 1);
+        this.scroll = true;
+        this.startX = eventResolved.clientX + this.main.scrollLeft;
+        this.columnToScroll = event.target.closest('ul');
+        this.startY = eventResolved.clientY + this.columnToScroll.scrollTop;
       }
-    });
-    this.board.addEventListener('mousedown', (event) => {
-      this.drag = MoveItems.chooseItem(event, this.delta);
-      if (this.drag) {
-        Utils.renderSpace.call(this, Utils.eventResolver(event), this.drag, 1);
-      }
-    });
+    }));
 
     // Обработчики перемещения ячейки
-    this.board.addEventListener('touchmove', (event) => {
+    ['mousemove', 'touchmove'].forEach((eventType) => this.board.addEventListener(eventType, (event) => {
+      const eventResolved = Utils.eventResolver(event);
       // Конечная точка скроллинга
+      this.endTouchingTitle = { x: eventResolved.clientX, y: eventResolved.clientY };
+
+      function resolveScrolls(elements) {
+        const divColumn = elements.find((item) => item.classList.contains('column'));
+        if (!divColumn) {
+          document.querySelectorAll('.scroll-block')
+            .forEach((scroll) => { !scroll.classList.contains('hidden') ? scroll.classList.add('hidden') : 0; });
+          return;
+        }
+        const column = divColumn.querySelector('ul.column-container');
+        const scrollUp = divColumn.querySelector('.column-scroll-up');
+        const scrollDown = divColumn.querySelector('.column-scroll-down');
+
+        if (column.scrollTop === 0) {
+          scrollUp.classList.add('hidden');
+        } else {
+          scrollUp.classList.remove('hidden');
+        }
+        if (column.scrollHeight - column.scrollTop === column.clientHeight) {
+          scrollDown.classList.add('hidden');
+        } else {
+          scrollDown.classList.remove('hidden');
+        }
+
+        const scrollBlock = elements.find((item) => item.classList.contains('scroll-block'));
+        if (scrollBlock) {
+          if (scrollBlock.classList.contains('column-scroll-up')) {
+            column.scrollTop -= 50;
+          } else {
+            column.scrollTop += 50;
+          }
+        }
+      }
+
       if (!this.drag) {
-        this.end = event.changedTouches[0].clientX;
-        this.main.scrollLeft = this.start - this.end;
+        if (this.scroll) {
+          this.endX = eventResolved.clientX;
+          this.endY = eventResolved.clientY;
+          this.main.scrollLeft = this.startX - this.endX;
+          this.columnToScroll.scrollTop = this.startY - this.endY;
+        }
       } else {
-        document.elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
-          .find((item) => item.classList.contains('column-container'))?.scrollIntoView({ inline: 'center', behavior: 'smooth' });
-        document.elementsFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
-          .find((item) => item.classList.contains('file-element'))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const elements = document.elementsFromPoint(eventResolved.clientX, eventResolved.clientY);
         this.drag.style.transform = 'rotate(2deg)';
-        this.drag.style.left = `${event.changedTouches[0].clientX - this.delta.x}px`;
-        this.drag.style.top = `${event.changedTouches[0].clientY - this.delta.y}px`;
-        Utils.renderSpace.call(this, Utils.eventResolver(event), this.drag);
+        this.drag.style.left = `${eventResolved.clientX - this.delta.x}px`;
+        this.drag.style.top = `${eventResolved.clientY - this.delta.y}px`;
+        Utils.renderSpace.call(this, eventResolved, this.drag);
+
+        resolveScrolls(elements);
       }
-    });
-    this.board.addEventListener('mousemove', (event) => {
-      if (this.drag) {
-        this.drag.style.transform = 'rotate(2deg)';
-        this.drag.style.left = `${event.clientX - this.delta.x}px`;
-        this.drag.style.top = `${event.clientY - this.delta.y}px`;
-        Utils.renderSpace.call(this, Utils.eventResolver(event), this.drag);
-      }
-    });
+    }));
 
     // Обработчики 'бросания' ячейки
-    this.board.addEventListener('touchend', (event) => {
-      this.drag = MoveItems.dropItem(Utils.eventResolver(event), this.drag);
-    });
-    this.board.addEventListener('mouseup', (event) => {
+    ['mouseup', 'touchend'].forEach((eventType) => this.board.addEventListener(eventType, async (event) => {
+      if (this.timeout) clearTimeout(this.timeout);
       if (this.drag) {
-        this.drag = MoveItems.dropItem(Utils.eventResolver(event), this.drag);
+        this.dancer.classList.remove('hidden');
+        this.drag = await MoveItems.dropItem(event, this.drag, this.list.data);
+        await this.update();
       }
-    });
+      this.scroll = false;
+    }));
 
     // Обработчики "ухода" курсора
     ['mouseleave', 'touchcancel'].forEach((eventName) => {
-      this.page.addEventListener(eventName, (event) => {
+      this.page.addEventListener(eventName, async (event) => {
         if (this.drag) {
           this.drag = null;
           const e = (event.type === 'mouseleave') ? new Event('mouseup') : new Event('touchend');
           this.board.dispatchEvent(e);
-          App.update();
+          await this.update();
+        } else {
+          this.scroll = false;
         }
       });
     });
