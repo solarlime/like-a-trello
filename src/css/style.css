@@ -233,6 +233,28 @@ main {
     max-height: 80vh;
 }
 
+.modal-error {
+    text-align: center;
+}
+
+.wrapper {
+    width: 270px;
+    height: 300px;
+    object-fit: contain;
+    overflow: hidden;
+}
+
+.modal-dancer {
+    background: white;
+    opacity: 0.7;
+}
+
+.dancer {
+    width: 300px;
+    height: 300px;
+    text-align: center;
+}
+
 #add-and-update, #delete, .modal-file-container {
     display: flex;
     flex-direction: column;
