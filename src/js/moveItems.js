@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-cycle */
 import Storage from './storage';
-import App from './app';
 import Utils from './utils';
 
 // Всех, кто меньше, уменьшаем на единицу кроме тех, кто меньше изначального
@@ -26,14 +25,15 @@ export default class MoveItems {
     return null;
   }
 
-  static dropItem(event, drag) {
+  static async dropItem(event, drag, list) {
+    const eventResolved = Utils.eventResolver(event);
     if (drag) {
       // Новая колонка (если это именно она)
       const column = document
-        .elementsFromPoint(event.clientX, event.clientY)
+        .elementsFromPoint(eventResolved.clientX, eventResolved.clientY)
         .find((item) => item.classList.contains('column-container'));
       if (column) {
-        MoveItems.putItem(event, column, drag);
+        await MoveItems.putItem(eventResolved, column.id, drag, list);
       } else {
         drag.style.transform = '';
         drag.classList.remove('drag');
@@ -42,21 +42,17 @@ export default class MoveItems {
     return null;
   }
 
-  static putItem(event, column, drag) {
+  static async putItem(event, targetColumn, drag, list) {
     // Фиксируем старую колонку, понадобится при перестроении колонок
     const oldColumn = drag.closest('.column-container').id;
     const pointItem = document.elementsFromPoint(
-      Utils.eventResolver(event).clientX,
-      Utils.eventResolver(event).clientY,
+      event.clientX,
+      event.clientY,
     ).find(
       (item) => (item.classList.contains('column-item')
         || item.classList.contains('column-space')) && !item.classList.contains('drag'),
     );
     const dragId = drag.getAttribute('data-id');
-    // Новая (возможно) колонка
-    const targetColumn = document.elementsFromPoint(event.clientX, event.clientY)
-      .find((item) => item.classList.contains('column-container')).id;
-    const items = Storage.getItems();
     // Новый номер. В зависимости от ситуации присваиваться будет по-разному
     let endOrder;
     const dragOrder = parseInt(drag.getAttribute('data-order'), 10);
@@ -81,17 +77,27 @@ export default class MoveItems {
     if (targetColumn === oldColumn) {
       // 1.1. Mouseup на пустом месте
       if (!endItem) {
-        endOrder = items.filter((item) => item.column === targetColumn).length;
+        endOrder = list.filter((item) => item.column === targetColumn).length;
       } else {
-        // Исправляем "перепрыгивание" при перетаскивании вниз
+        // 1.2. Место не пустое. Исправляем "перепрыгивание" при перетаскивании вниз
         endOrder = (function fixJumping() {
           const parsed = parseInt(endItem.getAttribute('data-order'), 10);
           return (dragOrder > parsed) ? parsed : parsed - 1;
         }());
       }
-      items.find((item) => item.id === dragId).order = endOrder;
+
+      if (endOrder === dragOrder) {
+        // Прячем скролл, если есть
+        const scroll = document.querySelector('.scroll-block:not(.hidden)');
+        if (scroll) {
+          scroll.classList.add('hidden');
+        }
+        return;
+      }
+
+      list.find((item) => item.id === dragId).order = endOrder;
       // На основе dragOrder и endOrder меняем остальные номера
-      items.filter((item) => item.column === oldColumn
+      list.filter((item) => item.column === oldColumn
         && item.id !== dragId)
         .map((item) => {
           const parsedOrder = parseInt(item.order, 10);
@@ -111,22 +117,22 @@ export default class MoveItems {
     //  Вариант 2. Колонка изменилась
     } else {
       // В старой колонке заполняем появившуюся пустоту
-      items.filter((item) => item.column === oldColumn
+      list.filter((item) => item.column === oldColumn
         && parseInt(item.order, 10) > dragOrder)
         .map((item) => {
           const parsedOrder = parseInt(item.order, 10);
           item.order = parsedOrder - 1;
           return item;
         });
-      const targetItem = items.find((item) => item.id === dragId);
+      const targetItem = list.find((item) => item.id === dragId);
       // 2.1. Mouseup на пустом месте
       if (!endItem) {
-        endOrder = items.filter((item) => item.column === targetColumn).length + 1;
+        endOrder = list.filter((item) => item.column === targetColumn).length + 1;
       //  2.2 Mouseup на одной из ячеек
       } else {
         endOrder = parseInt(endItem.getAttribute('data-order'), 10);
         // Ячейки с номером > endOrder увеличиваем на 1
-        items.filter((item) => item.column === targetColumn
+        list.filter((item) => item.column === targetColumn
           && parseInt(item.order, 10) >= endOrder)
           .map((item) => {
             const parsedOrder = parseInt(item.order, 10);
@@ -137,7 +143,9 @@ export default class MoveItems {
       targetItem.column = targetColumn;
       targetItem.order = endOrder;
     }
-    Storage.setItems(items);
-    App.update();
+
+    const listToSend = list
+      .map((item) => ({ id: item.id, order: item.order, column: item.column }));
+    await Storage.request('update', JSON.stringify(listToSend));
   }
 }
