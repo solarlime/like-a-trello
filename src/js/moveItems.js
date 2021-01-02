@@ -87,11 +87,6 @@ export default class MoveItems {
       }
 
       if (endOrder === dragOrder) {
-        // Прячем скролл, если есть
-        const scroll = document.querySelector('.scroll-block:not(.hidden)');
-        if (scroll) {
-          scroll.classList.add('hidden');
-        }
         return;
       }
 
@@ -142,6 +137,12 @@ export default class MoveItems {
       }
       targetItem.column = targetColumn;
       targetItem.order = endOrder;
+    }
+
+    // Прячем скролл, если есть
+    const scroll = document.querySelector('.scroll-block:not(.hidden)');
+    if (scroll) {
+      scroll.classList.add('hidden');
     }
 
     const listToSend = list
