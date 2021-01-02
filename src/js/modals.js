@@ -56,6 +56,12 @@ export default class Modals {
       const target = list.find((item) => item.id.toString() === rowId);
       target.name = name;
       target.files = filesToSave;
+      try {
+        await Utils.checkSize(quota, JSON.stringify(list));
+        await Storage.request('update', JSON.stringify({ id: rowId, name, files: filesToSave }));
+      } catch (error) {
+        return { error };
+      }
     } else {
       if (!list) {
         list = [];
