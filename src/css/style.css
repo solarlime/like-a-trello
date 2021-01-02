@@ -18,6 +18,7 @@ body {
     min-width: 320px;
     width: auto;
     height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
     background-color: #25272a;
     background-image: url("../img/nothern-lights.jpg");
     background-size: cover;
@@ -497,6 +498,10 @@ label {
 }
 
 @media (max-width: 410px), (max-height: 700px) {
+
+    :root {
+        --header: 50;
+    }
 
     html {
         font-size: 14px;
