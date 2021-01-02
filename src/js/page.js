@@ -68,6 +68,20 @@ export default class Page {
     window.dispatchEvent(new Event('resize'));
     window.oncontextmenu = () => false;
 
+    // Обработчики для боковых скроллов
+    ['mousemove', 'touchmove'].forEach((eventType) => this.page.addEventListener(eventType, (event) => {
+      const eventResolved = Utils.eventResolver(event);
+      const elements = document.elementsFromPoint(eventResolved.clientX, eventResolved.clientY);
+      const scroll = elements.find((item) => item.classList.contains('scrolls'));
+      if (this.drag && scroll) {
+        if (scroll.classList.contains('scroll-left')) {
+          this.main.scrollLeft -= 20;
+        } else {
+          this.main.scrollLeft += 20;
+        }
+      }
+    }));
+
     // Обработчики для кнопок 'Add new item'
     this.pluses.forEach((plus) => {
       ['mouseup', 'touchend'].forEach((eventType) => plus.addEventListener(eventType, (event) => {
