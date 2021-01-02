@@ -16,6 +16,8 @@ export default class Page {
     this.scrollRight = this.page.querySelector('.scroll-right');
     this.modalAddUpdate = this.page.querySelector('.modal-add-update');
     this.modalDelete = this.page.querySelector('.modal-delete');
+    this.modalError = this.page.querySelector('.modal-error');
+    this.dancer = this.page.querySelector('.modal-dancer');
     this.modalFile = this.page.querySelector('.modal-file');
     this.form = this.page.querySelector('form#add-and-update');
     this.cancels = this.page.querySelectorAll('button.cancel');
@@ -295,5 +297,25 @@ export default class Page {
         }
       });
     });
+  }
+
+  // Функция обновления содержимого
+  async update(full = false) {
+    try {
+      Utils.reset();
+      document.querySelectorAll('li.column-item').forEach((item) => item.remove());
+      if (this.dancer.classList.contains('hidden')) { this.dancer.classList.remove('hidden'); }
+      if (full) {
+        this.page.querySelectorAll('.column-container').forEach((column) => { column.scrollTop = 0; });
+        this.list = await Storage.request('fetch');
+      }
+    } catch (e) {
+      alert(`Oops! Can't fetch the data! The following information may be helpful. ${e.message}`);
+    } finally {
+      if (this.list.data) {
+        this.list.data.sort((a, b) => a.order - b.order).forEach((item) => Utils.render(item));
+      }
+      this.dancer.classList.add('hidden');
+    }
   }
 }

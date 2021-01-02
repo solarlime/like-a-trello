@@ -18,7 +18,7 @@ export default class Utils {
     const pointColumn = document.elementsFromPoint(event.clientX, event.clientY)
       .find((item) => item.classList.contains('column-container'));
     const space = document.querySelector('.column-space');
-    const spaceToRemove = drag.closest('.column-container')
+    const spaceToRemove = drag?.closest('.column-container')
       ? drag.closest('.column-container').querySelector('.column-space') : null;
     // Если уже есть пробел - убираем
     if (pointColumn && spaceToRemove
@@ -176,7 +176,7 @@ export default class Utils {
       + '                          </div>';
     // Требуется учесть наличие файлов
     if (item.files.length) {
-      const filesContainer = document.createElement('div');
+      const filesContainer = document.createElement('ul');
       filesContainer.setAttribute('class', 'column-item-files');
       item.files.forEach((file) => {
         Utils.renderFiles(filesContainer, file);
@@ -188,5 +188,32 @@ export default class Utils {
     } catch (e) {
       console.log(e);
     }
+  }
+
+  // Функция сброса
+  static reset() {
+    document.forms['add-and-update'].reset();
+    Array.from(document.querySelector('.files').children).forEach((item) => item.remove());
+    const file = Array.from(document.querySelector('.modal-file-container').children)
+      .find((item) => item.classList.contains('preview') || item.classList.contains('preview-image'));
+    const space = document.querySelector('.column-space');
+    if (space) {
+      space.remove();
+    }
+    if (file) {
+      file.remove();
+    }
+  }
+
+  // Функция, возвращающая размер массива данных на отправку
+  static checkSize(quota, string) {
+    return new Promise((resolve, reject) => {
+      const used = new Blob([string]).size;
+      if (quota - used < quota / 10) {
+        reject(new Error('Not saved! The free space is almost run out. Delete some unnecessary data.'));
+      } else {
+        resolve();
+      }
+    });
   }
 }
