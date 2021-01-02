@@ -19,7 +19,7 @@ app.use(koaBody({
 app.use(async (ctx) => {
   ctx.res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
 
-  const url = 'mongodb+srv://zeit-jwaA2fQ4rxTmrRdnzXh5SarF:6mVY8Gw9SNGA4Jp@cluster0.isxfw.mongodb.net?retryWrites=true&w=majority';
+  const url = process.env.MONGO_URL;
   const client = new MongoClient(url, { useUnifiedTopology: true });
 
   // The database to use
