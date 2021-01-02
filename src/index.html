@@ -14,11 +14,14 @@
         </h1>
     </header>
     <main>
+        <div class="scrolls scroll-left"></div>
         <ul class="board">
             <li class="board-item">
                 <div class="column">
                     <span class="column-title">To do:</span>
+                    <div class="column-scroll-up scroll-block hidden">Drag & move to scroll up</div>
                     <ul class="column-container" id="todo"></ul>
+                    <div class="column-scroll-down scroll-block hidden">Drag & move to scroll down</div>
                     <button class="new" type="button">
                         Add new item
                     </button>
@@ -27,7 +30,9 @@
             <li class="board-item">
                 <div class="column">
                     <span class="column-title">Doing:</span>
+                    <div class="column-scroll-up scroll-block hidden">Drag & move to scroll up</div>
                     <ul class="column-container" id="doing"></ul>
+                    <div class="column-scroll-down scroll-block hidden">Drag & move to scroll down</div>
                     <button class="new" type="button">
                         Add new item
                     </button>
@@ -36,16 +41,17 @@
             <li class="board-item">
                 <div class="column">
                     <span class="column-title">Done:</span>
+                    <div class="column-scroll-up scroll-block hidden">Drag & move to scroll up</div>
                     <ul class="column-container" id="done"></ul>
+                    <div class="column-scroll-down scroll-block hidden">Drag & move to scroll down</div>
                     <button class="new" type="button">
                         Add new item
                     </button>
                 </div>
             </li>
         </ul>
+        <div class="scrolls scroll-right"></div>
     </main>
-    <div class="scroll-left"></div>
-    <div class="scroll-right"></div>
     <div class="modal-container modal-add-update hidden">
         <div class="modal">
             <form id="add-and-update" novalidate>
@@ -59,7 +65,7 @@
                     <span class="file-container">
                         <input id="file" type="file" multiple>
                         <span class="fake-file">
-                            Drop your files here or choose them. Be careful: localStorage is only 5 MB in total!
+                            Drop your files here or choose them. Be careful: the storage is only 50 MB at all!
                         </span>
                     </span>
                     <span class="error error-file hidden"></span>
