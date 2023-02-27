@@ -20,7 +20,7 @@ body {
     height: 100vh;
     height: calc(var(--vh, 1vh) * 100);
     background-color: #25272a;
-    background-image: url("../img/nothern-lights.jpg");
+    background-image: url("../img/nothern-lights.svg");
     background-size: cover;
     background-repeat: no-repeat;
     margin: 0;
@@ -267,8 +267,8 @@ main {
 }
 
 .wrapper {
-    width: 270px;
-    height: 300px;
+    width: 200px;
+    height: 200px;
     object-fit: contain;
     overflow: hidden;
 }
@@ -279,8 +279,8 @@ main {
 }
 
 .dancer {
-    width: 300px;
-    height: 300px;
+    width: 200px;
+    height: 200px;
     text-align: center;
 }
 
