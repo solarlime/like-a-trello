@@ -1,4 +1,5 @@
 const path = require('path');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -7,9 +8,6 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
-  },
-  devServer: {
-    port: 9000,
   },
   module: {
     rules: [
@@ -35,32 +33,13 @@ module.exports = {
         ],
       },
       {
-        test: /\.(png|jpg|gif|ico)$/i,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              esModule: false,
-              name: 'img/[name].[ext]',
-            },
-          },
-        ],
-      },
-      {
-        test: /\.(txt)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              esModule: false,
-              name: '[name].[ext]',
-            },
-          },
-        ],
+        test: /\.(png|jpg|gif|ico|txt)$/i,
+        type: 'asset/resource',
       },
     ],
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new HtmlWebPackPlugin({
       favicon: './src/img/favicon.png',
       template: './src/index.html',

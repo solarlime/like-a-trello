@@ -110,3 +110,12 @@ dist
 
 # Vercel files
 .vercel
+
+# Yarn Berry files
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

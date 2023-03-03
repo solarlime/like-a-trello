@@ -23,16 +23,16 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: yarn
+        run: yarn install --immutable
 
       - name: Linting & Testing
         run: yarn run lint && yarn run test
 
       - name: Vercel Action
-        uses: amondnet/vercel-action@v20.0.0
+        uses: amondnet/vercel-action@v25
         id: vercel-deployment
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
