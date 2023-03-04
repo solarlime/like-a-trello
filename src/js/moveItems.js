@@ -147,6 +147,6 @@ export default class MoveItems {
 
     const listToSend = list
       .map((item) => ({ id: item.id, order: item.order, column: item.column }));
-    await Storage.request('update', JSON.stringify(listToSend));
+    await Storage.request('update', JSON.stringify({ move: listToSend }));
   }
 }
