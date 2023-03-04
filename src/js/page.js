@@ -24,6 +24,8 @@ export default class Page {
     this.fileChooser = this.page.querySelector('input#file');
     this.fakeFile = this.page.querySelector('.fake-file');
     this.scrolls = this.page.querySelectorAll('.scrolls');
+    this.lime = this.page.querySelector('svg.lime');
+    this.info = this.page.querySelector('svg.info');
     this.column = 'todo';
     this.drag = null;
     // "Дельта" - разница между курсором и левым верхним углом
@@ -189,6 +191,41 @@ export default class Page {
       this.dancer.classList.remove('hidden');
       await Modals.delete(this.targetRow.getAttribute('data-id'), this.list.data);
       await this.update();
+    }));
+
+    // Обработчики кнопки 'Info'
+    ['mouseup', 'touchend'].forEach((eventType) => this.info.addEventListener(eventType, (event) => {
+      event.preventDefault();
+      this.modalError.querySelector('#error-message').textContent = 'Press and hold a cursor / finger on a chosen card\'s header for a couple of seconds to drag it!';
+      Modals.show(this.modalError);
+      const timeout = setTimeout(async () => {
+        Modals.cancel();
+        clearTimeout(timeout);
+      }, 5000);
+    }));
+
+    // Обработчики кнопки 'Lime'
+    ['mouseup', 'touchend'].forEach((eventType) => this.lime.addEventListener(eventType, (event) => {
+      event.preventDefault();
+      const container = this.modalError.querySelector('#error-message');
+      container.textContent = '';
+      const link = document.createElement('a');
+      link.href = 'https://solarlime.dev';
+      link.target = '_blank';
+      link.textContent = 'solarlime';
+      const heart = document.createElement('span');
+      heart.style = 'color: #ffcf48;';
+      heart.textContent = '♥';
+      container.insertAdjacentElement('beforeend', link)
+        .insertAdjacentElement('beforebegin', heart)
+        .insertAdjacentText('afterend', ' by ');
+      container.insertAdjacentText('afterbegin', 'Made with ');
+
+      Modals.show(this.modalError);
+      const timeout = setTimeout(async () => {
+        Modals.cancel();
+        clearTimeout(timeout);
+      }, 5000);
     }));
 
     // Обработчик кнопки выбора файла

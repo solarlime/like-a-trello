@@ -2,6 +2,7 @@
 
 :root {
     --header: 100;
+    --header-font: 2rem;
     --min-board: 850px;
     --item-length: calc((100% - 20px) / 3);
     --column-item: 45;
@@ -11,6 +12,10 @@ html {
     font-family: "IBM Plex Sans", Arial, sans-serif;
     font-size: 16px;
     word-wrap: break-word;
+}
+
+a {
+    color: #78b856;
 }
 
 body {
@@ -27,20 +32,48 @@ body {
 }
 
 .header {
+    min-width: inherit;
+    width: 100vw;
+    height: calc(var(--header) * 1px);
+    padding: 0;
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.header-container {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 280px;
     width: calc(100vw - 40px);
-    height: calc(var(--header) * 1px);
-    padding: 0 20px;
-    color: white;
-    background: rgba(0, 0, 0, 0.5);
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .header-title {
-    flex-grow: 1;
+    flex: 1 0 auto;
     font-weight: 600;
+    font-size: var(--header-font);
     text-align: center;
+}
+
+.header-extras {
+    display: flex;
+    align-items: center;
+    width: auto;
+    height: calc(var(--header) * 1px);
+}
+
+.header-extras-svg {
+    flex: 0 0 auto;
+    fill: white;
+    width: var(--header-font);
+    height: var(--header-font);
+    cursor: pointer;
+}
+
+.header-extras-svg:hover {
+    fill: #78b856;
 }
 
 main {
@@ -55,9 +88,9 @@ main {
 
 .scroll-left, .scroll-right {
     position: fixed;
-    top: 0;
+    top: calc(var(--header) * 1px);;
     width: 50px;
-    height: 100%;
+    height: calc(100% - calc(var(--header) * 1px));
 }
 
 .scroll-left {
@@ -82,7 +115,7 @@ main {
     min-width: 250px;
     width: var(--item-length);
     margin-right: 20px;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.1);
     padding: 10px 10px 5px 10px;
     border-radius: 10px;
     box-shadow: 0 0 1px;
@@ -215,11 +248,11 @@ main {
 }
 
 .column-item-actions-update:hover {
-    fill: forestgreen;
+    fill: #78b856;
 }
 
 .column-item-actions-delete:hover {
-    fill: crimson;
+    fill: #ffcf48;
 }
 
 .column-item-files {
@@ -368,7 +401,7 @@ label {
 }
 
 .fake-file-ondnd {
-    border-color: forestgreen;
+    border-color: #78b856;
     box-shadow: 0 0 1px white;
 }
 
@@ -442,7 +475,7 @@ label {
     right: 0;
     width: 15px;
     height: 15px;
-    fill: crimson;
+    fill: #ffcf48;
     box-sizing: border-box;
     border: 1px solid white;
     background: #25272a;
@@ -498,10 +531,11 @@ label {
     display: none;
 }
 
-@media (max-width: 410px), (max-height: 700px) {
+@media (max-width: 500px), (max-height: 700px) {
 
     :root {
         --header: 50;
+        --header-font: 1.4rem;
     }
 
     html {
@@ -510,10 +544,6 @@ label {
 
     main {
         padding-bottom: 15px;
-    }
-
-    .header-title {
-        font-size: 1.4rem;
     }
 
     .column-scroll-up {
