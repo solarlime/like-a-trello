@@ -49,7 +49,7 @@ export default class Modals {
     return [];
   }
 
-  // Функция сохранения: отправка данных в localStorage
+  // Функция сохранения: отправка данных на сервер
   static async save(modal, button, column, rowId, filesToSave, list, quota) {
     const name = modal.querySelector('#description').value.trim();
     if (rowId) {

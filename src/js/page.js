@@ -48,8 +48,13 @@ export default class Page {
       if (svg.tagName !== 'svg') return null;
       if (svg.classList.value === 'column-item-actions-update') {
         this.targetRow = svg.closest('li');
-        this.filesToSave = Modals.show(this.modalAddUpdate, this.targetRow,
-          event.target, this.list.data, this.filesToSave);
+        this.filesToSave = Modals.show(
+          this.modalAddUpdate,
+          this.targetRow,
+          event.target,
+          this.list.data,
+          this.filesToSave,
+        );
       }
       if (svg.classList.value === 'column-item-actions-delete') {
         this.targetRow = svg.closest('li');
@@ -86,8 +91,14 @@ export default class Page {
     this.pluses.forEach((plus) => {
       ['mouseup', 'touchend'].forEach((eventType) => plus.addEventListener(eventType, (event) => {
         this.targetRow = 0;
-        this.filesToSave = Modals.show.call(this,
-          this.modalAddUpdate, this.targetRow, event.target, this.list.data, this.filesToSave);
+        this.filesToSave = Modals.show.call(
+          this,
+          this.modalAddUpdate,
+          this.targetRow,
+          event.target,
+          this.list.data,
+          this.filesToSave,
+        );
       }));
     });
 
@@ -134,9 +145,7 @@ export default class Page {
     ['mouseup', 'touchend'].forEach((eventType) => this.save.addEventListener(eventType, async (event) => {
       event.preventDefault();
       this.dancer.classList.remove('hidden');
-      const awaiter = await Modals.save(
-        this.modalAddUpdate, event.target, this.column, this.targetRow ? this.targetRow.getAttribute('data-id') : 0, this.filesToSave, this.list.data, this.quotaForFiles,
-      );
+      const awaiter = await Modals.save(this.modalAddUpdate, event.target, this.column, this.targetRow ? this.targetRow.getAttribute('data-id') : 0, this.filesToSave, this.list.data, this.quotaForFiles);
       if (awaiter.error) {
         this.dancer.classList.add('hidden');
         Modals.cancel();
@@ -184,8 +193,12 @@ export default class Page {
 
     // Обработчик кнопки выбора файла
     this.fileChooser.addEventListener('change', (event) => {
-      Utils.fileUploader(Array.from(event.target.files),
-        this.filesToSave, this.modalAddUpdate, this.save)
+      Utils.fileUploader(
+        Array.from(event.target.files),
+        this.filesToSave,
+        this.modalAddUpdate,
+        this.save,
+      )
         .then(() => {
           this.save.disabled = !validation(event.target.closest('.modal').querySelector('#description'));
         });
@@ -216,8 +229,12 @@ export default class Page {
 
     // Обработчик DnD файлов
     this.fakeFile.addEventListener('drop', (event) => {
-      Utils.fileUploader(Array.from(event.dataTransfer.files),
-        this.filesToSave, this.modalAddUpdate, this.save)
+      Utils.fileUploader(
+        Array.from(event.dataTransfer.files),
+        this.filesToSave,
+        this.modalAddUpdate,
+        this.save,
+      )
         .then(() => {
           this.save.disabled = !validation(event.target.closest('.modal').querySelector('#description'));
         });
