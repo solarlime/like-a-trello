@@ -4,7 +4,7 @@
 
 ### What:
 
-Based on [Help desk](https://solarlime.github.io/help-desk/).
+Based on [Help desk](https://github.com/solarlime/help-desk).
 It's a simple Kanban board. Just like a Trello in some way.
 
 ### Features:
@@ -15,6 +15,6 @@ It's a simple Kanban board. Just like a Trello in some way.
 - Dragging and dropping pictures and files to add them
 - Previewing pictures and downloading them (files can be downloaded without previewing)
 - All information is stored in a MongoDB
-- Serverless: koa server is optimized for Vercel
+- A server part is [here](https://github.com/solarlime/crud-mongo-server)
 
 Try it on [Vercel](https://like-a-trello.solarlime.dev/)!
