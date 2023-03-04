@@ -22,7 +22,7 @@ describe('E2E', () => {
     browser = await puppeteer.launch(
       {
         // headless: false,
-        // slowMo: 100,
+        // slowMo: 50,
         // devtools: true,
       },
     );
@@ -34,14 +34,34 @@ describe('E2E', () => {
   });
   describe('Tests', () => {
     async function dancerResolver() {
+      const headers = {
+        'access-control-allow-origin': '*',
+        'access-control-allow-methods': 'OPTIONS, GET, POST, PUT, DELETE',
+        'access-control-max-age': 2592000,
+        'access-control-allow-headers': 'Cache-Control, Content-Type',
+      };
       await page.setRequestInterception(true);
       page.on('request', (req) => {
         if (req.url().endsWith('fetch') || req.url().endsWith('new') || req.url().endsWith('update') || req.url().endsWith('delete')) {
-          req.respond({
-            status: 200,
-            contentType: 'text/plain',
-            body: JSON.stringify({ status: 'Test', data: [] }),
-          });
+          if (req.method() === 'OPTIONS') {
+            req.respond({ status: 204, headers });
+          } else if (req.method() === 'PUT') {
+            req.respond({
+              status: 200, headers, contentType: 'application/json', body: JSON.stringify({ status: 'Updated', data: '' }),
+            });
+          } else if (req.method() === 'DELETE') {
+            req.respond({
+              status: 200, headers, contentType: 'application/json', body: JSON.stringify({ status: 'Removed', data: '' }),
+            });
+          } else if (req.method() === 'POST') {
+            req.respond({
+              status: 200, headers, contentType: 'application/json', body: JSON.stringify({ status: 'Added', data: '' }),
+            });
+          } else {
+            req.respond({
+              status: 200, headers, contentType: 'application/json', body: JSON.stringify({ status: 'Fetched', data: [] }),
+            });
+          }
         } else {
           req.continue();
         }
