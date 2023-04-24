@@ -25,7 +25,7 @@
   "homepage": "https://github.com/solarlime/like-a-trello#readme",
   "devDependencies": {
     "@babel/cli": "^7.21.0",
-    "@babel/core": "^7.21.3",
+    "@babel/core": "^7.21.4",
     "@babel/preset-env": "^7.19.4",
     "babel-jest": "^29.5.0",
     "babel-loader": "^9.0.1",
