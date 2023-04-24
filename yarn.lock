@@ -2041,6 +2041,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@puppeteer/browsers@npm:0.5.0":
+  version: 0.5.0
+  resolution: "@puppeteer/browsers@npm:0.5.0"
+  dependencies:
+    debug: 4.3.4
+    extract-zip: 2.0.1
+    https-proxy-agent: 5.0.1
+    progress: 2.0.3
+    proxy-from-env: 1.1.0
+    tar-fs: 2.1.1
+    unbzip2-stream: 1.4.3
+    yargs: 17.7.1
+  peerDependencies:
+    typescript: ">= 4.7.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  bin:
+    browsers: lib/cjs/main-cli.js
+  checksum: d75fde03be4be106ca907834739251c2bb0b33a09fa23315c5dbe8b8b4cfed2f1b26af62e1dbe5fccc227e9bc87b51da0815461b982477eb01439bfdd6e7b01a
+  languageName: node
+  linkType: hard
+
 "@sinclair/typebox@npm:^0.25.16":
   version: 0.25.21
   resolution: "@sinclair/typebox@npm:0.25.21"
@@ -3416,14 +3439,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromium-bidi@npm:0.4.5":
-  version: 0.4.5
-  resolution: "chromium-bidi@npm:0.4.5"
+"chromium-bidi@npm:0.4.7":
+  version: 0.4.7
+  resolution: "chromium-bidi@npm:0.4.7"
   dependencies:
     mitt: 3.0.0
   peerDependencies:
     devtools-protocol: "*"
-  checksum: 82935d25faad4c4718ba699df884e2719911bfbf99b5eaf42eceb92b1b91f5c251d087641ebb5a93f4bc82a679a6aaaa310d2f8b201443df81ed160cb9e1bee7
+  checksum: eec7581e2eddd2c95014c6edc5aae0b036c79bbeadee05166436b16139b6932c902c5ce21d95ed919a592f58d3a47c5469dc5f3de2a300700b2748ab119ad65e
   languageName: node
   linkType: hard
 
@@ -6760,7 +6783,7 @@ __metadata:
     jest: ^29.5.0
     mini-css-extract-plugin: ^2.7.5
     numeral: ^2.0.6
-    puppeteer: ^19.8.0
+    puppeteer: ^19.11.0
     terser-webpack-plugin: ^5.3.7
     uniqid: ^5.4.0
     webpack: ^5.80.0
@@ -8291,11 +8314,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:19.8.0":
-  version: 19.8.0
-  resolution: "puppeteer-core@npm:19.8.0"
+"puppeteer-core@npm:19.11.0":
+  version: 19.11.0
+  resolution: "puppeteer-core@npm:19.11.0"
   dependencies:
-    chromium-bidi: 0.4.5
+    "@puppeteer/browsers": 0.5.0
+    chromium-bidi: 0.4.7
     cross-fetch: 3.1.5
     debug: 4.3.4
     devtools-protocol: 0.0.1107588
@@ -8310,20 +8334,21 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: a696ae2f8c3a8d0ca25141d22e2a49221d99a27e539d5776dbe153d1f8c00f04686a2cee6df43c3a20eb1b41f4077c339babf59e39fff26d8f34d08d726f1c96
+  checksum: fe88d3055649ecebacbbd367bbe96e4ba1aea08f9c13589393cdc701934b34724afcbeba668195a9b9c70fd5a1cf6db230ead66b48767275e60898602a9ff784
   languageName: node
   linkType: hard
 
-"puppeteer@npm:^19.8.0":
-  version: 19.8.0
-  resolution: "puppeteer@npm:19.8.0"
+"puppeteer@npm:^19.11.0":
+  version: 19.11.0
+  resolution: "puppeteer@npm:19.11.0"
   dependencies:
+    "@puppeteer/browsers": 0.5.0
     cosmiconfig: 8.1.3
     https-proxy-agent: 5.0.1
     progress: 2.0.3
     proxy-from-env: 1.1.0
-    puppeteer-core: 19.8.0
-  checksum: 174b66c6904f3cc386b72124150d0b677a7bc6b36f5cab7ee66851eebeea71776facf864ce7bcfd9d257535b4fa2e9c8b6b59feeabb28b730a418a18029f9f0d
+    puppeteer-core: 19.11.0
+  checksum: 3e23568483ad00f35c23cc581bf7db32ac7835f1d0a31bbd764327e0c1a4515ef99554d1916ab4c56e0bde0c881b33491a248bac6b5972a78a58ca938f4a5b25
   languageName: node
   linkType: hard
 
@@ -10073,6 +10098,21 @@ __metadata:
   version: 21.1.1
   resolution: "yargs-parser@npm:21.1.1"
   checksum: ed2d96a616a9e3e1cc7d204c62ecc61f7aaab633dcbfab2c6df50f7f87b393993fe6640d017759fe112d0cb1e0119f2b4150a87305cc873fd90831c6a58ccf1c
+  languageName: node
+  linkType: hard
+
+"yargs@npm:17.7.1":
+  version: 17.7.1
+  resolution: "yargs@npm:17.7.1"
+  dependencies:
+    cliui: ^8.0.1
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.3
+    y18n: ^5.0.5
+    yargs-parser: ^21.1.1
+  checksum: 3d8a43c336a4942bc68080768664aca85c7bd406f018bad362fd255c41c8f4e650277f42fd65d543fce99e084124ddafee7bbfc1a5c6a8fda4cec78609dcf8d4
   languageName: node
   linkType: hard
 
