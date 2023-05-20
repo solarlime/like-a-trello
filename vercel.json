@@ -12,7 +12,7 @@
       "destination": "/api/index"
     }
   ],
-  "github": {
-    "enabled": false
+  "git": {
+    "deploymentEnabled": false
   }
 }
