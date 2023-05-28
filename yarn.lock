@@ -3895,12 +3895,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:3.1.5":
-  version: 3.1.5
-  resolution: "cross-fetch@npm:3.1.5"
+"cross-fetch@npm:3.1.6":
+  version: 3.1.6
+  resolution: "cross-fetch@npm:3.1.6"
   dependencies:
-    node-fetch: 2.6.7
-  checksum: f6b8c6ee3ef993ace6277fd789c71b6acf1b504fd5f5c7128df4ef2f125a429e29cd62dc8c127523f04a5f2fa4771ed80e3f3d9695617f441425045f505cf3bb
+    node-fetch: ^2.6.11
+  checksum: 704b3519ab7de488328cc49a52cf1aa14132ec748382be5b9557b22398c33ffa7f8c2530e8a97ed8cb55da52b0a9740a9791d361271c4591910501682d981d9c
   languageName: node
   linkType: hard
 
@@ -6926,7 +6926,7 @@ __metadata:
     jest: ^29.5.0
     mini-css-extract-plugin: ^2.7.6
     numeral: ^2.0.6
-    puppeteer: ^20.2.1
+    puppeteer: ^20.3.0
     terser-webpack-plugin: ^5.3.9
     uniqid: ^5.4.0
     webpack: ^5.83.1
@@ -7445,9 +7445,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:2.6.7":
-  version: 2.6.7
-  resolution: "node-fetch@npm:2.6.7"
+"node-fetch@npm:^2.6.11":
+  version: 2.6.11
+  resolution: "node-fetch@npm:2.6.11"
   dependencies:
     whatwg-url: ^5.0.0
   peerDependencies:
@@ -7455,7 +7455,7 @@ __metadata:
   peerDependenciesMeta:
     encoding:
       optional: true
-  checksum: 8d816ffd1ee22cab8301c7756ef04f3437f18dace86a1dae22cf81db8ef29c0bf6655f3215cb0cdb22b420b6fe141e64b26905e7f33f9377a7fa59135ea3e10b
+  checksum: 249d0666a9497553384d46b5ab296ba223521ac88fed4d8a17d6ee6c2efb0fc890f3e8091cafe7f9fba8151a5b8d925db2671543b3409a56c3cd522b468b47b3
   languageName: node
   linkType: hard
 
@@ -8447,13 +8447,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:20.2.1":
-  version: 20.2.1
-  resolution: "puppeteer-core@npm:20.2.1"
+"puppeteer-core@npm:20.3.0":
+  version: 20.3.0
+  resolution: "puppeteer-core@npm:20.3.0"
   dependencies:
     "@puppeteer/browsers": 1.3.0
     chromium-bidi: 0.4.9
-    cross-fetch: 3.1.5
+    cross-fetch: 3.1.6
     debug: 4.3.4
     devtools-protocol: 0.0.1120988
     ws: 8.13.0
@@ -8462,18 +8462,18 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: f427c645fbc011fda985772837afc2a97f3ba37dc732d46c65ff6da3635c3a2d289771d6f4b2075749b253776adcb41d5aab1c0e3962076747ca0b8f93bf4064
+  checksum: df0b0e249c100d7985b23bca56df6f50e970540f61e6bd80341aff88a9097230185d349a37375954db0de8149d6c64f21823841df6a773ccd18dca7b9a81f938
   languageName: node
   linkType: hard
 
-"puppeteer@npm:^20.2.1":
-  version: 20.2.1
-  resolution: "puppeteer@npm:20.2.1"
+"puppeteer@npm:^20.3.0":
+  version: 20.3.0
+  resolution: "puppeteer@npm:20.3.0"
   dependencies:
     "@puppeteer/browsers": 1.3.0
     cosmiconfig: 8.1.3
-    puppeteer-core: 20.2.1
-  checksum: 64b4447b936d49e2b9d60bd9beeea1016879d59797b1319eac1f88d2dd7cfef7604fa2f42b6a73f12a0f636bc99317c4d050df4324219974fba3f5537e8c8340
+    puppeteer-core: 20.3.0
+  checksum: efc920debb6e5961e0b03ffa2111045c8f0a884a38447d92a1434340a4b28abb93ecee278080cbcf8d582265757cc17f41ac744920c8b256838f67e5249442e4
   languageName: node
   linkType: hard
 
