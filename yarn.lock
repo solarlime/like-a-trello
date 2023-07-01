@@ -10452,10 +10452,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"word-wrap@npm:^1.2.3, word-wrap@npm:~1.2.3":
-  version: 1.2.3
-  resolution: "word-wrap@npm:1.2.3"
-  checksum: 30b48f91fcf12106ed3186ae4fa86a6a1842416df425be7b60485de14bec665a54a68e4b5156647dec3a70f25e84d270ca8bc8cd23182ed095f5c7206a938c1f
+word-wrap@aashutoshrathi/word-wrap:
+  version: 1.2.6
+  resolution: "word-wrap@https://github.com/aashutoshrathi/word-wrap.git#commit=84981421a9ff67bf7604a1183c719b9bfe053994"
+  checksum: e00a6564b1477b241197440c1fe83a92c538a9b59c02a95168740de60d35649910fb59c088a1a3ee7ac25bafc1d5d0aee60a12e5d0f0cd5cc164051b471ace54
   languageName: node
   linkType: hard
 

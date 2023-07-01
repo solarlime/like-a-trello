@@ -52,5 +52,8 @@
     "numeral": "^2.0.6",
     "uniqid": "^5.4.0"
   },
+  "resolutions": {
+    "word-wrap": "aashutoshrathi/word-wrap"
+  },
   "packageManager": "yarn@3.4.1"
 }
