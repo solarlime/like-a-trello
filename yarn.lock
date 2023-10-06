@@ -22,15 +22,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/cli@npm:^7.21.5":
-  version: 7.21.5
-  resolution: "@babel/cli@npm:7.21.5"
+"@babel/cli@npm:^7.23.0":
+  version: 7.23.0
+  resolution: "@babel/cli@npm:7.23.0"
   dependencies:
     "@jridgewell/trace-mapping": ^0.3.17
     "@nicolo-ribaudo/chokidar-2": 2.1.8-no-fsevents.3
     chokidar: ^3.4.0
     commander: ^4.0.1
-    convert-source-map: ^1.1.0
+    convert-source-map: ^2.0.0
     fs-readdir-recursive: ^1.1.0
     glob: ^7.2.0
     make-dir: ^2.1.0
@@ -45,7 +45,7 @@ __metadata:
   bin:
     babel: ./bin/babel.js
     babel-external-helpers: ./bin/babel-external-helpers.js
-  checksum: 5d2e48e63b37120e44e9fd0bd74c3c5561f3cfaff8aab844227194708142f9b8210f86a129041787c199db58f6911bea9999e8469b4f46874baaf4ecc1725f47
+  checksum: beeb189560bf9c4ea951ef637eefa5214654678fb09c4aaa6695921037059c1e1553c610fe95fbd19a9cdfd9f5598a812fc13df40a6b9a9ea899e43fc6c42052
   languageName: node
   linkType: hard
 
@@ -3726,7 +3726,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"convert-source-map@npm:^1.1.0, convert-source-map@npm:^1.6.0, convert-source-map@npm:^1.7.0":
+"convert-source-map@npm:^1.6.0, convert-source-map@npm:^1.7.0":
   version: 1.7.0
   resolution: "convert-source-map@npm:1.7.0"
   dependencies:
@@ -6957,7 +6957,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "like-a-trello@workspace:."
   dependencies:
-    "@babel/cli": ^7.21.5
+    "@babel/cli": ^7.23.0
     "@babel/core": ^7.22.17
     "@babel/preset-env": ^7.21.5
     babel-jest: ^29.6.4
