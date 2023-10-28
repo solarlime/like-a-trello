@@ -9,9 +9,7 @@
     "test": "jest --testPathPattern=./src/",
     "coverage": "jest --testPathPattern=./src/ --coverage",
     "e2e": "jest --testPathPattern=./e2e/",
-    "lint": "eslint .",
-    "vercel": "yarn run build && vercel",
-    "vercel-dev": "yarn run vercel dev"
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -52,8 +50,5 @@
     "numeral": "^2.0.6",
     "uniqid": "^5.4.0"
   },
-  "resolutions": {
-    "word-wrap": "aashutoshrathi/word-wrap"
-  },
-  "packageManager": "yarn@3.4.1"
+  "packageManager": "yarn@3.6.4"
 }
