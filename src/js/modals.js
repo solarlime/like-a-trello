@@ -19,6 +19,7 @@ export default class Modals {
     if (row) {
       input.value = row.querySelector('.column-item-title').textContent;
     }
+    console.log(input);
     if (list && row) {
       const filesToRender = list.find((item) => item.id === row.getAttribute('data-id')).files;
       // Отрисовываем файлы
@@ -45,6 +46,11 @@ export default class Modals {
     }
     if (input) {
       input.focus();
+    } else {
+      const descriptionInput = modal.querySelector('#description');
+      if (descriptionInput) {
+        descriptionInput.focus();
+      }
     }
     return [];
   }
