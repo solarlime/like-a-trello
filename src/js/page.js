@@ -238,7 +238,8 @@ export default class Page {
       )
         .then(() => {
           this.save.disabled = !validation(event.target.closest('.modal').querySelector('#description'));
-        });
+        })
+        .catch((e) => { console.log(e); });
     });
 
     function preventDefaults(event) {
