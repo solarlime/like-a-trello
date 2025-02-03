@@ -7,6 +7,7 @@ export default class Storage {
    */
   static request(command, data = '') {
     return new Promise((resolve, reject) => {
+      let timeout = null;
       const actions = {
         new: { method: 'POST', url: 'new' },
         update: { method: 'PUT', url: 'update' },
@@ -27,10 +28,21 @@ export default class Storage {
         }
       });
 
-      xhr.addEventListener('error', (error) => {
+      ['error', 'abort'].forEach((event) => xhr.addEventListener(event, (error) => {
+        timeout = setTimeout(
+          () => {
+            clearTimeout(timeout);
+            window.location.replace(process.env.SERVER_DOWN);
+          },
+          1000,
+        );
         reject(error);
-      });
+      }));
 
+      timeout = setTimeout(() => {
+        clearTimeout(timeout);
+        xhr.abort();
+      }, 5000);
       if (action.method === 'GET') {
         xhr.setRequestHeader('cache-control', 'no-cache');
         xhr.send();
