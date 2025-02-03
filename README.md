@@ -1,4 +1,4 @@
-![CI](https://github.com/solarlime/like-a-trello/workflows/CI/badge.svg?branch=master)
+[![CI](https://github.com/solarlime/like-a-trello/actions/workflows/preview.yml/badge.svg?branch=preview)](https://github.com/solarlime/like-a-trello/actions/workflows/preview.yml)
 
 # Like A Trello - Simple Kanban board
 
