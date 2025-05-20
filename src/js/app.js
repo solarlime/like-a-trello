@@ -1,4 +1,3 @@
-/* eslint-disable import/no-cycle */
 import Page from './page';
 
 export default class App {

@@ -16,7 +16,10 @@ export default class Storage {
       };
       const action = actions[command];
       const xhr = new XMLHttpRequest();
-      xhr.open(action.method, `${process.env.HOST}/like-a-trello/${action.url}`);
+      xhr.open(
+        action.method,
+        `${process.env.HOST}/like-a-trello/${action.url}`,
+      );
       xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 
       xhr.addEventListener('load', () => {
@@ -28,16 +31,15 @@ export default class Storage {
         }
       });
 
-      ['error', 'abort'].forEach((event) => xhr.addEventListener(event, (error) => {
-        timeout = setTimeout(
-          () => {
+      ['error', 'abort'].forEach((event) =>
+        xhr.addEventListener(event, (error) => {
+          timeout = setTimeout(() => {
             clearTimeout(timeout);
             window.location.replace(process.env.SERVER_DOWN);
-          },
-          1000,
-        );
-        reject(error);
-      }));
+          }, 1000);
+          reject(error);
+        }),
+      );
 
       timeout = setTimeout(() => {
         clearTimeout(timeout);

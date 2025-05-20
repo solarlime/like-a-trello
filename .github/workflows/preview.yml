@@ -1,14 +1,14 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: CI (preview)
 
 # Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the preview branch
   push:
-    branches: [ preview ]
+    branches: [preview]
   pull_request:
-    branches: [ preview ]
+    branches: [preview]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -31,8 +31,11 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Linting & Testing
-        run: yarn run lint && yarn run test
+      - name: Checking code quality
+        run: yarn run check
+
+      - name: Testing
+        run: yarn run test
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest

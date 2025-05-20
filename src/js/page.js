@@ -1,4 +1,4 @@
-/* eslint-disable import/no-cycle, no-unused-expressions, no-param-reassign */
+/* eslint-disable no-param-reassign */
 import Modals from './modals';
 import validation from './validation';
 import MoveItems from './moveItems';
@@ -76,157 +76,210 @@ export default class Page {
     window.oncontextmenu = () => false;
 
     // Обработчики для боковых скроллов
-    ['mousemove', 'touchmove'].forEach((eventType) => this.page.addEventListener(eventType, (event) => {
-      const eventResolved = Utils.eventResolver(event);
-      const elements = document.elementsFromPoint(eventResolved.clientX, eventResolved.clientY);
-      const scroll = elements.find((item) => item.classList.contains('scrolls'));
-      if (this.drag && scroll) {
-        if (scroll.classList.contains('scroll-left')) {
-          this.main.scrollLeft -= 20;
-        } else {
-          this.main.scrollLeft += 20;
+    ['mousemove', 'touchmove'].forEach((eventType) =>
+      this.page.addEventListener(eventType, (event) => {
+        const eventResolved = Utils.eventResolver(event);
+        const elements = document.elementsFromPoint(
+          eventResolved.clientX,
+          eventResolved.clientY,
+        );
+        const scroll = elements.find((item) =>
+          item.classList.contains('scrolls'),
+        );
+        if (this.drag && scroll) {
+          if (scroll.classList.contains('scroll-left')) {
+            this.main.scrollLeft -= 20;
+          } else {
+            this.main.scrollLeft += 20;
+          }
         }
-      }
-    }));
+      }),
+    );
 
     // Обработчики для кнопок 'Add new item'
     this.pluses.forEach((plus) => {
-      ['mouseup', 'touchend'].forEach((eventType) => plus.addEventListener(eventType, (event) => {
-        this.targetRow = 0;
-        this.filesToSave = Modals.show.call(
-          this,
-          this.modalAddUpdate,
-          this.targetRow,
-          event.target,
-          this.list.data,
-          this.filesToSave,
-        );
-      }));
+      ['mouseup', 'touchend'].forEach((eventType) =>
+        plus.addEventListener(eventType, (event) => {
+          this.targetRow = 0;
+          this.filesToSave = Modals.show.call(
+            this,
+            this.modalAddUpdate,
+            this.targetRow,
+            event.target,
+            this.list.data,
+            this.filesToSave,
+          );
+        }),
+      );
     });
 
     // Обработчики нажатий на файлы и управляющие кнопки
-    ['mousedown', 'touchstart'].forEach((eventType) => this.board.addEventListener(eventType, (event) => {
-      event.preventDefault();
-      const eventResolved = Utils.eventResolver(event);
-      this.touchStartPoint = { x: eventResolved.pageX, y: eventResolved.pageY };
-      this.touch = true;
-    }));
-
-    ['mouseup', 'touchend'].forEach((eventType) => this.board.addEventListener(eventType, (event) => {
-      event.preventDefault();
-      if (this.touch) {
+    ['mousedown', 'touchstart'].forEach((eventType) =>
+      this.board.addEventListener(eventType, (event) => {
+        event.preventDefault();
         const eventResolved = Utils.eventResolver(event);
-        this.touchEndPoint = { x: eventResolved.pageX, y: eventResolved.pageY };
-        if ((this.touchStartPoint.x === this.touchEndPoint.x)
-          && (this.touchStartPoint.y === this.touchEndPoint.y)) {
-          if (event.target.closest('.file-element')) {
-            Modals.show(this.modalFile, 0, event.target);
-          }
-          if (event.target.closest('.column-item-actions')) {
-            actionsButtons.call(this, event);
+        this.touchStartPoint = {
+          x: eventResolved.pageX,
+          y: eventResolved.pageY,
+        };
+        this.touch = true;
+      }),
+    );
+
+    ['mouseup', 'touchend'].forEach((eventType) =>
+      this.board.addEventListener(eventType, (event) => {
+        event.preventDefault();
+        if (this.touch) {
+          const eventResolved = Utils.eventResolver(event);
+          this.touchEndPoint = {
+            x: eventResolved.pageX,
+            y: eventResolved.pageY,
+          };
+          if (
+            this.touchStartPoint.x === this.touchEndPoint.x &&
+            this.touchStartPoint.y === this.touchEndPoint.y
+          ) {
+            if (event.target.closest('.file-element')) {
+              Modals.show(this.modalFile, 0, event.target);
+            }
+            if (event.target.closest('.column-item-actions')) {
+              actionsButtons.call(this, event);
+            }
           }
         }
-      }
-      this.touch = false;
-    }));
+        this.touch = false;
+      }),
+    );
 
     // Обработчики для кнопок Cancel
     this.cancels.forEach((cancel) => {
-      ['mouseup', 'touchend'].forEach((eventType) => cancel.addEventListener(eventType, (event) => {
-        event.preventDefault();
-        this.filesToSave = Modals.cancel();
-      }));
+      ['mouseup', 'touchend'].forEach((eventType) =>
+        cancel.addEventListener(eventType, (event) => {
+          event.preventDefault();
+          this.filesToSave = Modals.cancel();
+        }),
+      );
     });
 
     // Обработчик проверки поля ввода на валидность
-    this.form.querySelector('#description').addEventListener('input', (event) => {
-      this.save.disabled = !validation(event.target);
-    });
+    this.form
+      .querySelector('#description')
+      .addEventListener('input', (event) => {
+        this.save.disabled = !validation(event.target);
+      });
 
     // Обработчики кнопки 'Save'
-    ['mouseup', 'touchend'].forEach((eventType) => this.save.addEventListener(eventType, async (event) => {
-      event.preventDefault();
-      this.dancer.classList.remove('hidden');
-      const awaiter = await Modals.save(this.modalAddUpdate, event.target, this.column, this.targetRow ? this.targetRow.getAttribute('data-id') : 0, this.filesToSave, this.list.data, this.quotaForFiles);
-      if (awaiter.error) {
-        this.dancer.classList.add('hidden');
-        Modals.cancel();
-        this.modalError.querySelector('#error-message').textContent = awaiter.error.message;
+    ['mouseup', 'touchend'].forEach((eventType) =>
+      this.save.addEventListener(eventType, async (event) => {
+        event.preventDefault();
+        this.dancer.classList.remove('hidden');
+        const awaiter = await Modals.save(
+          this.modalAddUpdate,
+          event.target,
+          this.column,
+          this.targetRow ? this.targetRow.getAttribute('data-id') : 0,
+          this.filesToSave,
+          this.list.data,
+          this.quotaForFiles,
+        );
+        if (awaiter.error) {
+          this.dancer.classList.add('hidden');
+          Modals.cancel();
+          this.modalError.querySelector('#error-message').textContent =
+            awaiter.error.message;
+          Modals.show(this.modalError);
+          const timeout = setTimeout(async () => {
+            Modals.cancel();
+            await this.update(true);
+            clearTimeout(timeout);
+          }, 5000);
+        } else {
+          this.filesToSave = awaiter;
+          await this.update();
+        }
+      }),
+    );
+
+    // Обработчики кнопки 'Download'
+    ['mouseup', 'touchend'].forEach((eventType) =>
+      this.download.addEventListener(eventType, (event) => {
+        event.preventDefault();
+        this.download.textContent = 'Wait...';
+        this.download.disabled = true;
+        event.target.blur();
+        const files = this.list.data.flatMap((item) => item.files);
+        const previewForDownload = this.page.querySelector(
+          '#preview-for-download',
+        );
+        const fileItem = files.find(
+          (file) => file.name === previewForDownload.title,
+        );
+        const url = document.createElement('a');
+        url.download = fileItem.name;
+        url.href = fileItem.link;
+        url.rel = 'noopener';
+        setTimeout(() => {
+          url.dispatchEvent(new MouseEvent('click'));
+          Modals.cancel();
+          this.download.textContent = 'Download';
+          this.download.disabled = false;
+        }, 1000);
+      }),
+    );
+
+    // Обработчики кнопки 'Delete'
+    ['mouseup', 'touchend'].forEach((eventType) =>
+      this.delete.addEventListener(eventType, async (event) => {
+        event.preventDefault();
+        this.dancer.classList.remove('hidden');
+        await Modals.delete(
+          this.targetRow.getAttribute('data-id'),
+          this.list.data,
+        );
+        await this.update();
+      }),
+    );
+
+    // Обработчики кнопки 'Info'
+    ['mouseup', 'touchend'].forEach((eventType) =>
+      this.info.addEventListener(eventType, (event) => {
+        event.preventDefault();
+        this.modalError.querySelector('#error-message').textContent =
+          "Press and hold a cursor / finger on a chosen card's header for a couple of seconds to drag it!";
         Modals.show(this.modalError);
         const timeout = setTimeout(async () => {
           Modals.cancel();
-          await this.update(true);
           clearTimeout(timeout);
         }, 5000);
-      } else {
-        this.filesToSave = awaiter;
-        await this.update();
-      }
-    }));
-
-    // Обработчики кнопки 'Download'
-    ['mouseup', 'touchend'].forEach((eventType) => this.download.addEventListener(eventType, (event) => {
-      event.preventDefault();
-      this.download.textContent = 'Wait...';
-      this.download.disabled = true;
-      event.target.blur();
-      const files = this.list.data.flatMap((item) => item.files);
-      const previewForDownload = this.page.querySelector('#preview-for-download');
-      const fileItem = files.find((file) => file.name === previewForDownload.title);
-      const url = document.createElement('a');
-      url.download = fileItem.name;
-      url.href = fileItem.link;
-      url.rel = 'noopener';
-      setTimeout(() => {
-        url.dispatchEvent(new MouseEvent('click'));
-        Modals.cancel();
-        this.download.textContent = 'Download';
-        this.download.disabled = false;
-      }, 1000);
-    }));
-
-    // Обработчики кнопки 'Delete'
-    ['mouseup', 'touchend'].forEach((eventType) => this.delete.addEventListener(eventType, async (event) => {
-      event.preventDefault();
-      this.dancer.classList.remove('hidden');
-      await Modals.delete(this.targetRow.getAttribute('data-id'), this.list.data);
-      await this.update();
-    }));
-
-    // Обработчики кнопки 'Info'
-    ['mouseup', 'touchend'].forEach((eventType) => this.info.addEventListener(eventType, (event) => {
-      event.preventDefault();
-      this.modalError.querySelector('#error-message').textContent = 'Press and hold a cursor / finger on a chosen card\'s header for a couple of seconds to drag it!';
-      Modals.show(this.modalError);
-      const timeout = setTimeout(async () => {
-        Modals.cancel();
-        clearTimeout(timeout);
-      }, 5000);
-    }));
+      }),
+    );
 
     // Обработчики кнопки 'Lime'
-    ['mouseup', 'touchend'].forEach((eventType) => this.lime.addEventListener(eventType, (event) => {
-      event.preventDefault();
-      const container = this.modalError.querySelector('#error-message');
-      container.textContent = '';
-      const link = document.createElement('a');
-      link.href = 'https://solarlime.dev';
-      link.target = '_blank';
-      link.textContent = 'solarlime';
-      const heart = document.createElement('span');
-      heart.style = 'color: #ffcf48;';
-      heart.textContent = '♥';
-      container.insertAdjacentElement('beforeend', link)
-        .insertAdjacentElement('beforebegin', heart)
-        .insertAdjacentText('afterend', ' by ');
-      container.insertAdjacentText('afterbegin', 'Made with ');
+    ['mouseup', 'touchend'].forEach((eventType) =>
+      this.lime.addEventListener(eventType, (event) => {
+        event.preventDefault();
+        const container = this.modalError.querySelector('#error-message');
+        container.textContent = '';
+        const link = document.createElement('a');
+        link.href = 'https://solarlime.dev';
+        link.target = '_blank';
+        link.textContent = 'solarlime';
+        const heart = document.createElement('span');
+        heart.style = 'color: #ffcf48;';
+        heart.textContent = '♥';
+        container
+          .insertAdjacentElement('beforeend', link)
+          .insertAdjacentElement('beforebegin', heart)
+          .insertAdjacentText('afterend', ' by ');
+        container.insertAdjacentText('afterbegin', 'Made with ');
 
-      Modals.show(this.modalError);
-      const timeout = setTimeout(async () => {
-        Modals.cancel();
-        clearTimeout(timeout);
-      }, 5000);
-    }));
+        Modals.show(this.modalError);
+        const timeout = setTimeout(async () => {
+          Modals.cancel();
+          clearTimeout(timeout);
+        }, 5000);
+      }),
+    );
 
     // Обработчик кнопки выбора файла
     this.fileChooser.addEventListener('change', (event) => {
@@ -237,9 +290,13 @@ export default class Page {
         this.save,
       )
         .then(() => {
-          this.save.disabled = !validation(event.target.closest('.modal').querySelector('#description'));
+          this.save.disabled = !validation(
+            event.target.closest('.modal').querySelector('#description'),
+          );
         })
-        .catch((e) => { console.log(e); });
+        .catch((e) => {
+          console.log(e);
+        });
     });
 
     function preventDefaults(event) {
@@ -272,125 +329,167 @@ export default class Page {
         this.filesToSave,
         this.modalAddUpdate,
         this.save,
-      )
-        .then(() => {
-          this.save.disabled = !validation(event.target.closest('.modal').querySelector('#description'));
-        });
+      ).then(() => {
+        this.save.disabled = !validation(
+          event.target.closest('.modal').querySelector('#description'),
+        );
+      });
     });
 
     // Обработчики кнопок удаления файлов
-    ['mouseup', 'touchend'].forEach((eventType) => this.modalAddUpdate.addEventListener(eventType, (event) => {
-      const svg = Utils.getSVG(event.target);
-      if (svg.tagName !== 'svg') return;
-      this.filesToSave.splice(this.filesToSave
-        .findIndex((item) => item.lastModified.toString() === svg.closest('li')
-          .getAttribute('data-time')), 1);
-      this.save.disabled = !validation(event.target.closest('.modal').querySelector('#description'));
-      svg.closest('li').remove();
-    }));
+    ['mouseup', 'touchend'].forEach((eventType) =>
+      this.modalAddUpdate.addEventListener(eventType, (event) => {
+        const svg = Utils.getSVG(event.target);
+        if (svg.tagName !== 'svg') return;
+        this.filesToSave.splice(
+          this.filesToSave.findIndex(
+            (item) =>
+              item.lastModified.toString() ===
+              svg.closest('li').getAttribute('data-time'),
+          ),
+          1,
+        );
+        this.save.disabled = !validation(
+          event.target.closest('.modal').querySelector('#description'),
+        );
+        svg.closest('li').remove();
+      }),
+    );
 
     // Обработчики захвата ячейки
-    ['mousedown', 'touchstart'].forEach((eventType) => this.board.addEventListener(eventType, (event) => {
-      const eventResolved = Utils.eventResolver(event);
-      this.startTouchingTitle = { x: eventResolved.clientX, y: eventResolved.clientY };
-      this.endTouchingTitle = { ...this.startTouchingTitle };
-      this.drag = null;
-      if (event.target.classList.contains('column-item-title')) {
-        this.timeout = setTimeout(() => {
-          if (this.endTouchingTitle
-            // Палец может немного дёрнуться: проявляется в мобильных chrome-браузерах. Чиним
-            && (Math.abs(this.startTouchingTitle.x - this.endTouchingTitle.x) < 5)
-            && (Math.abs(this.startTouchingTitle.y - this.endTouchingTitle.y) < 5)) {
-            this.drag = MoveItems.chooseItem(event, this.delta);
-            Utils.renderSpace.call(this, eventResolved, this.drag, 1);
-          } else {
-            this.endTouchingTitle = undefined;
-          }
-          clearTimeout(this.timeout);
-        }, 1000);
-      }
-      if (!this.drag) {
-        // Начальная точка скроллинга
-        this.scroll = true;
-        this.startX = eventResolved.clientX + this.main.scrollLeft;
-        this.columnToScroll = event.target.closest('ul');
-        this.startY = eventResolved.clientY + this.columnToScroll.scrollTop;
-      }
-    }));
+    ['mousedown', 'touchstart'].forEach((eventType) =>
+      this.board.addEventListener(eventType, (event) => {
+        const eventResolved = Utils.eventResolver(event);
+        this.startTouchingTitle = {
+          x: eventResolved.clientX,
+          y: eventResolved.clientY,
+        };
+        this.endTouchingTitle = { ...this.startTouchingTitle };
+        this.drag = null;
+        if (event.target.classList.contains('column-item-title')) {
+          this.timeout = setTimeout(() => {
+            if (
+              this.endTouchingTitle &&
+              // Палец может немного дёрнуться: проявляется в мобильных chrome-браузерах. Чиним
+              Math.abs(this.startTouchingTitle.x - this.endTouchingTitle.x) <
+                5 &&
+              Math.abs(this.startTouchingTitle.y - this.endTouchingTitle.y) < 5
+            ) {
+              this.drag = MoveItems.chooseItem(event, this.delta);
+              Utils.renderSpace.call(this, eventResolved, this.drag, 1);
+            } else {
+              this.endTouchingTitle = undefined;
+            }
+            clearTimeout(this.timeout);
+          }, 1000);
+        }
+        if (!this.drag) {
+          // Начальная точка скроллинга
+          this.scroll = true;
+          this.startX = eventResolved.clientX + this.main.scrollLeft;
+          this.columnToScroll = event.target.closest('ul');
+          this.startY = eventResolved.clientY + this.columnToScroll.scrollTop;
+        }
+      }),
+    );
 
     // Обработчики перемещения ячейки
-    ['mousemove', 'touchmove'].forEach((eventType) => this.board.addEventListener(eventType, (event) => {
-      const eventResolved = Utils.eventResolver(event);
-      // Конечная точка скроллинга
-      this.endTouchingTitle = { x: eventResolved.clientX, y: eventResolved.clientY };
+    ['mousemove', 'touchmove'].forEach((eventType) =>
+      this.board.addEventListener(eventType, (event) => {
+        const eventResolved = Utils.eventResolver(event);
+        // Конечная точка скроллинга
+        this.endTouchingTitle = {
+          x: eventResolved.clientX,
+          y: eventResolved.clientY,
+        };
 
-      function resolveScrolls(elements) {
-        const divColumn = elements.find((item) => item.classList.contains('column'));
-        if (!divColumn) {
-          document.querySelectorAll('.scroll-block')
-            .forEach((scroll) => { !scroll.classList.contains('hidden') ? scroll.classList.add('hidden') : 0; });
-          return;
-        }
-        const column = divColumn.querySelector('ul.column-container');
-        const scrollUp = divColumn.querySelector('.column-scroll-up');
-        const scrollDown = divColumn.querySelector('.column-scroll-down');
+        function resolveScrolls(elements) {
+          const divColumn = elements.find((item) =>
+            item.classList.contains('column'),
+          );
+          if (!divColumn) {
+            document.querySelectorAll('.scroll-block').forEach((scroll) => {
+              if (!scroll.classList.contains('hidden')) {
+                scroll.classList.add('hidden');
+              }
+            });
+            return;
+          }
+          const column = divColumn.querySelector('ul.column-container');
+          const scrollUp = divColumn.querySelector('.column-scroll-up');
+          const scrollDown = divColumn.querySelector('.column-scroll-down');
 
-        if (column.scrollTop === 0) {
-          scrollUp.classList.add('hidden');
-        } else {
-          scrollUp.classList.remove('hidden');
-        }
-        if (column.scrollHeight - column.scrollTop === column.clientHeight) {
-          scrollDown.classList.add('hidden');
-        } else {
-          scrollDown.classList.remove('hidden');
-        }
-
-        const scrollBlock = elements.find((item) => item.classList.contains('scroll-block'));
-        if (scrollBlock) {
-          if (scrollBlock.classList.contains('column-scroll-up')) {
-            column.scrollTop -= 50;
+          if (column.scrollTop === 0) {
+            scrollUp.classList.add('hidden');
           } else {
-            column.scrollTop += 50;
+            scrollUp.classList.remove('hidden');
+          }
+          if (column.scrollHeight - column.scrollTop === column.clientHeight) {
+            scrollDown.classList.add('hidden');
+          } else {
+            scrollDown.classList.remove('hidden');
+          }
+
+          const scrollBlock = elements.find((item) =>
+            item.classList.contains('scroll-block'),
+          );
+          if (scrollBlock) {
+            if (scrollBlock.classList.contains('column-scroll-up')) {
+              column.scrollTop -= 50;
+            } else {
+              column.scrollTop += 50;
+            }
           }
         }
-      }
 
-      if (!this.drag) {
-        if (this.scroll) {
-          this.endX = eventResolved.clientX;
-          this.endY = eventResolved.clientY;
-          this.main.scrollLeft = this.startX - this.endX;
-          this.columnToScroll.scrollTop = this.startY - this.endY;
+        if (!this.drag) {
+          if (this.scroll) {
+            this.endX = eventResolved.clientX;
+            this.endY = eventResolved.clientY;
+            this.main.scrollLeft = this.startX - this.endX;
+            this.columnToScroll.scrollTop = this.startY - this.endY;
+          }
+        } else {
+          const elements = document.elementsFromPoint(
+            eventResolved.clientX,
+            eventResolved.clientY,
+          );
+          this.drag.style.transform = 'rotate(2deg)';
+          this.drag.style.left = `${eventResolved.clientX - this.delta.x}px`;
+          this.drag.style.top = `${eventResolved.clientY - this.delta.y}px`;
+          Utils.renderSpace.call(this, eventResolved, this.drag);
+
+          resolveScrolls(elements);
         }
-      } else {
-        const elements = document.elementsFromPoint(eventResolved.clientX, eventResolved.clientY);
-        this.drag.style.transform = 'rotate(2deg)';
-        this.drag.style.left = `${eventResolved.clientX - this.delta.x}px`;
-        this.drag.style.top = `${eventResolved.clientY - this.delta.y}px`;
-        Utils.renderSpace.call(this, eventResolved, this.drag);
-
-        resolveScrolls(elements);
-      }
-    }));
+      }),
+    );
 
     // Обработчики 'бросания' ячейки
-    ['mouseup', 'touchend'].forEach((eventType) => this.board.addEventListener(eventType, async (event) => {
-      if (this.timeout) clearTimeout(this.timeout);
-      if (this.drag) {
-        this.dancer.classList.remove('hidden');
-        this.drag = await MoveItems.dropItem(event, this.drag, this.list.data);
-        await this.update();
-      }
-      this.scroll = false;
-    }));
+    ['mouseup', 'touchend'].forEach((eventType) =>
+      this.board.addEventListener(eventType, async (event) => {
+        if (this.timeout) clearTimeout(this.timeout);
+        if (this.drag) {
+          this.dancer.classList.remove('hidden');
+          this.drag = await MoveItems.dropItem(
+            event,
+            this.drag,
+            this.list.data,
+          );
+          await this.update();
+        }
+        this.scroll = false;
+      }),
+    );
 
     // Обработчики "ухода" курсора
     ['mouseleave', 'touchcancel'].forEach((eventName) => {
       this.page.addEventListener(eventName, async (event) => {
         if (this.drag) {
           this.drag = null;
-          const e = (event.type === 'mouseleave') ? new Event('mouseup') : new Event('touchend');
+          const e =
+            event.type === 'mouseleave'
+              ? new Event('mouseup')
+              : new Event('touchend');
           this.board.dispatchEvent(e);
           await this.update();
         } else {
@@ -404,17 +503,27 @@ export default class Page {
   async update(full = false) {
     try {
       Utils.reset();
-      document.querySelectorAll('li.column-item').forEach((item) => item.remove());
-      if (this.dancer.classList.contains('hidden')) { this.dancer.classList.remove('hidden'); }
+      document
+        .querySelectorAll('li.column-item')
+        .forEach((item) => item.remove());
+      if (this.dancer.classList.contains('hidden')) {
+        this.dancer.classList.remove('hidden');
+      }
       if (full) {
-        this.page.querySelectorAll('.column-container').forEach((column) => { column.scrollTop = 0; });
+        this.page.querySelectorAll('.column-container').forEach((column) => {
+          column.scrollTop = 0;
+        });
         this.list = await Storage.request('fetch');
       }
     } catch (e) {
-      alert(`Oops! Can't fetch the data! The following information may be helpful. ${e.message}`);
+      alert(
+        `Oops! Can't fetch the data! The following information may be helpful. ${e.message}`,
+      );
     } finally {
       if (this.list.data) {
-        this.list.data.sort((a, b) => a.order - b.order).forEach((item) => Utils.render(item));
+        this.list.data
+          .sort((a, b) => a.order - b.order)
+          .forEach((item) => Utils.render(item));
       }
       this.dancer.classList.add('hidden');
     }

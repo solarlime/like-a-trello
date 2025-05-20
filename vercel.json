@@ -6,12 +6,7 @@
       "destination": "/index.html"
     }
   ],
-  "rewrites": [
-    {
-      "source": "/backend",
-      "destination": "/api/index"
-    }
-  ],
+  "rewrites": [],
   "git": {
     "deploymentEnabled": false
   }
