@@ -19,14 +19,12 @@ describe('E2E', () => {
         }
       });
     });
-    browser = await puppeteer.launch(
-      {
-        headless: 'new',
-        // headless: false,
-        // slowMo: 50,
-        // devtools: true,
-      },
-    );
+    browser = await puppeteer.launch({
+      headless: true,
+      // headless: false,
+      // slowMo: 50,
+      // devtools: true,
+    });
     page = await browser.newPage();
   });
   afterAll(async () => {
@@ -43,24 +41,41 @@ describe('E2E', () => {
       };
       await page.setRequestInterception(true);
       page.on('request', (req) => {
-        if (req.url().endsWith('fetch') || req.url().endsWith('new') || req.url().endsWith('update') || req.url().endsWith('delete')) {
+        if (
+          req.url().endsWith('fetch') ||
+          req.url().endsWith('new') ||
+          req.url().endsWith('update') ||
+          req.url().endsWith('delete')
+        ) {
           if (req.method() === 'OPTIONS') {
             req.respond({ status: 204, headers });
           } else if (req.method() === 'PUT') {
             req.respond({
-              status: 200, headers, contentType: 'application/json', body: JSON.stringify({ status: 'Updated', data: '' }),
+              status: 200,
+              headers,
+              contentType: 'application/json',
+              body: JSON.stringify({ status: 'Updated', data: '' }),
             });
           } else if (req.method() === 'DELETE') {
             req.respond({
-              status: 200, headers, contentType: 'application/json', body: JSON.stringify({ status: 'Removed', data: '' }),
+              status: 200,
+              headers,
+              contentType: 'application/json',
+              body: JSON.stringify({ status: 'Removed', data: '' }),
             });
           } else if (req.method() === 'POST') {
             req.respond({
-              status: 200, headers, contentType: 'application/json', body: JSON.stringify({ status: 'Added', data: '' }),
+              status: 200,
+              headers,
+              contentType: 'application/json',
+              body: JSON.stringify({ status: 'Added', data: '' }),
             });
           } else {
             req.respond({
-              status: 200, headers, contentType: 'application/json', body: JSON.stringify({ status: 'Fetched', data: [] }),
+              status: 200,
+              headers,
+              contentType: 'application/json',
+              body: JSON.stringify({ status: 'Fetched', data: [] }),
             });
           }
         } else {
@@ -75,40 +90,87 @@ describe('E2E', () => {
       // Add
       const plus = await page.$('button[class=new]');
       plus.click();
-      await page.waitForFunction(() => !document.querySelector('div.modal-add-update').classList.contains('hidden'));
+      await page.waitForFunction(
+        () =>
+          !document
+            .querySelector('div.modal-add-update')
+            .classList.contains('hidden'),
+      );
       const name = await page.$('textarea[id=description]');
       await name.type('Lock, stock and two smoking barrels');
       const save = await page.$('button[class=save]');
       save.click();
-      await page.waitForFunction(() => document.querySelector('div.modal-add-update').classList.contains('hidden'));
-      await page.waitForFunction(() => (document.querySelector('.column-item-title').textContent === 'Lock, stock and two smoking barrels'));
+      await page.waitForFunction(() =>
+        document
+          .querySelector('div.modal-add-update')
+          .classList.contains('hidden'),
+      );
+      await page.waitForFunction(
+        () =>
+          document.querySelector('.column-item-title').textContent ===
+          'Lock, stock and two smoking barrels',
+      );
 
       // Update
       const update = await page.$('svg[class=column-item-actions-update]');
       update.click();
-      await page.waitForFunction(() => !document.querySelector('div.modal-add-update').classList.contains('hidden'));
+      await page.waitForFunction(
+        () =>
+          !document
+            .querySelector('div.modal-add-update')
+            .classList.contains('hidden'),
+      );
       await name.click({ clickCount: 3 });
       await name.type('Pulp fiction');
       save.click();
-      await page.waitForFunction(() => document.querySelector('div.modal-add-update').classList.contains('hidden'));
-      await page.waitForFunction(() => (document.querySelector('.column-item-title').textContent === 'Pulp fiction'));
+      await page.waitForFunction(() =>
+        document
+          .querySelector('div.modal-add-update')
+          .classList.contains('hidden'),
+      );
+      await page.waitForFunction(
+        () =>
+          document.querySelector('.column-item-title').textContent ===
+          'Pulp fiction',
+      );
 
       // Delete
       const remove = await page.$('svg[class=column-item-actions-delete]');
       remove.click();
-      await page.waitForFunction(() => !document.querySelector('div.modal-delete').classList.contains('hidden'));
+      await page.waitForFunction(
+        () =>
+          !document
+            .querySelector('div.modal-delete')
+            .classList.contains('hidden'),
+      );
       const destroy = await page.$('button[class=delete]');
       destroy.click();
-      await page.waitForFunction(() => document.querySelector('div.modal-delete').classList.contains('hidden'));
-      await page.waitForFunction(() => !(document.querySelector('.column-item-title')));
+      await page.waitForFunction(() =>
+        document.querySelector('div.modal-delete').classList.contains('hidden'),
+      );
+      await page.waitForFunction(
+        () => !document.querySelector('.column-item-title'),
+      );
 
       // Error
       plus.click();
-      await page.waitForFunction(() => !document.querySelector('div.modal-add-update').classList.contains('hidden'));
+      await page.waitForFunction(
+        () =>
+          !document
+            .querySelector('div.modal-add-update')
+            .classList.contains('hidden'),
+      );
       await name.type('1');
       await name.press('Backspace');
-      await page.waitForFunction(() => !document.querySelector('.error-description').classList.contains('hidden'));
-      await page.waitForFunction(() => document.querySelector('.save').disabled);
+      await page.waitForFunction(
+        () =>
+          !document
+            .querySelector('.error-description')
+            .classList.contains('hidden'),
+      );
+      await page.waitForFunction(
+        () => document.querySelector('.save').disabled,
+      );
     });
   });
 });

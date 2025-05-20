@@ -9,7 +9,5 @@ module.exports = merge(common, {
     port: 9000,
     hot: true,
   },
-  plugins: [
-    new Dotenv(),
-  ],
+  plugins: [new Dotenv()],
 });
