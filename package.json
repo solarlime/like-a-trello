@@ -50,7 +50,7 @@
     "prettier": "3.5.3",
     "puppeteer": "^22.13.1",
     "terser-webpack-plugin": "^5.3.10",
-    "webpack": "^5.94.0",
+    "webpack": "^5.101.3",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.2",
     "webpack-merge": "^5.10.0"
